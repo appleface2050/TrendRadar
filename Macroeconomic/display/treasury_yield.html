@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美国国债收益率分析</title>
+    <link rel="stylesheet" href="../css/treasury_yield.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>美国国债收益率分析</h1>
+                <p class="subtitle">U.S. Treasury Yield Analysis</p>
+            </div>
+            <div class="header-right">
+                <a href="../index.html" class="btn btn-secondary">← 回到首页</a>
+                <div class="control-group">
+                    <label for="timeRange">时间范围:</label>
+                    <select id="timeRange" class="select-control">
+                        <option value="1y" selected>近1年</option>
+                        <option value="5y">近5年</option>
+                        <option value="10y">近10年</option>
+                        <option value="all">全部</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="granularity">数据粒度:</label>
+                    <select id="granularity" class="select-control">
+                        <option value="day" selected>日度</option>
+                        <option value="week">周度</option>
+                        <option value="month">月度</option>
+                    </select>
+                </div>
+                <button id="resetZoom" class="btn btn-secondary">重置缩放</button>
+                <button id="exportBtn" class="btn btn-primary">导出数据</button>
+            </div>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-title">1年期收益率</div>
+                <div class="kpi-value" id="dgs1Value">--</div>
+                <div class="kpi-unit">%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">2年期收益率</div>
+                <div class="kpi-value" id="dgs2Value">--</div>
+                <div class="kpi-unit">%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">3年期收益率</div>
+                <div class="kpi-value" id="dgs3Value">--</div>
+                <div class="kpi-unit">%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">5年期收益率</div>
+                <div class="kpi-value" id="dgs5Value">--</div>
+                <div class="kpi-unit">%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">10年期收益率</div>
+                <div class="kpi-value" id="dgs10Value">--</div>
+                <div class="kpi-unit">%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">曲线陡峭度</div>
+                <div class="kpi-value" id="steepnessValue">--</div>
+                <div class="kpi-unit">%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">数据覆盖</div>
+                <div class="kpi-value" id="dataDays">--</div>
+                <div class="kpi-unit">天</div>
+            </div>
+        </div>
+
+        <!-- Main Trend Chart -->
+        <div class="chart-section full-width">
+            <h2>收益率历史趋势</h2>
+            <p class="chart-description">
+                展示各期限美国国债收益率的历史走势。
+                通过上方的期限复选框可以选择显示或隐藏特定期限的曲线。
+            </p>
+            <div class="chart-container large">
+                <canvas id="mainTrendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Analysis Charts Grid -->
+        <div class="charts-grid">
+            <div class="chart-section">
+                <h2>利差分析</h2>
+                <p class="chart-description">各期限与10年期的利差走势</p>
+                <div class="chart-container">
+                    <canvas id="spreadChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h2>期限结构</h2>
+                <p class="chart-description">最新日期各期限收益率对比</p>
+                <div class="chart-container">
+                    <canvas id="termStructureChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h2>分布统计</h2>
+                <p class="chart-description">各期限收益率频率分布</p>
+                <div class="chart-container">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Volatility Chart -->
+        <div class="chart-section full-width">
+            <h2>波动率分析</h2>
+            <p class="chart-description">30日滚动标准差对比（衡量收益率波动程度）</p>
+            <div class="chart-container medium">
+                <canvas id="volatilityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Statistics Tables -->
+        <div class="statistics-section">
+            <h2>统计指标</h2>
+            <div class="stats-grid">
+                <div class="stats-table">
+                    <h3>基础统计</h3>
+                    <div id="basicStats">加载中...</div>
+                </div>
+                <div class="stats-table">
+                    <h3>分位数</h3>
+                    <div id="percentileStats">加载中...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>数据来源: Federal Reserve Economic Data (FRED)</p>
+            <p>数据代码: DGS1, DGS2, DGS3, DGS5, DGS10 (Daily Treasury Par Yield Curve Rates)</p>
+            <p>最后更新: <span id="lastUpdate">--</span></p>
+        </footer>
+    </div>
+
+    <!-- Load Scripts -->
+    <script src="../js/treasury_yield/data-processor.js"></script>
+    <script src="../js/treasury_yield/curve-analyzer.js"></script>
+    <script src="../js/treasury_yield/statistics.js"></script>
+    <script src="../js/treasury_yield/chart-manager.js"></script>
+    <script src="../js/treasury_yield/app.js"></script>
+
+    <script>
+        // 更新最后更新时间
+        document.getElementById('lastUpdate').textContent = new Date().toLocaleString('zh-CN');
+    </script>
+</body>
+</html>

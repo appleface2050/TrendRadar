@@ -1,0 +1,541 @@
+/**
+ * 美国国债收益率分析页面样式
+ * 深色主题 - 与主页保持一致
+ */
+
+/* CSS 变量系统 - 与 dashboard.css 保持一致 */
+:root {
+    /* 主色调 - 紫色系 */
+    --primary-color: #6C5CE7;
+    --primary-dark: #5A4AD1;
+    --primary-light: #8B7CF5;
+    --primary-fade: rgba(108, 92, 231, 0.15);
+
+    /* 辅助色 */
+    --secondary-color: #A29BFE;
+    --success-color: #4CAF50;
+    --danger-color: #FFA500;
+    --warning-color: #FFB74D;
+    --info-color: #4A90E2;
+
+    /* 期限颜色 */
+    --dgs1-color: #3B82F6;
+    --dgs2-color: #10B981;
+    --dgs3-color: #F59E0B;
+    --dgs5-color: #F97316;
+    --dgs10-color: #8B5CF6;
+
+    /* 背景色系统 */
+    --bg-outer: #1E1E2F;
+    --bg-inner: #F5F5F7;
+    --bg-card: #FFFFFF;
+    --bg-header: #1E1E2F;
+    --bg-section-alt: #FAFAFA;
+
+    /* 文本颜色 */
+    --text-primary: #1A1A2E;
+    --text-secondary: #6B7280;
+    --text-on-dark: #FFFFFF;
+
+    /* 边框和分隔线 */
+    --border-color: #E5E7EB;
+    --border-header: rgba(255, 255, 255, 0.1);
+
+    /* 阴影效果 */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-glow: 0 4px 16px rgba(108, 92, 231, 0.3);
+
+    /* 过渡动画 */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s ease;
+
+    /* 圆角 */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+}
+
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+        'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: var(--bg-outer);
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: var(--bg-inner);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+/* Header */
+.header {
+    background: var(--bg-header);
+    color: var(--text-on-dark);
+    padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    border-bottom: 1px solid var(--border-header);
+}
+
+.header-left h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--text-on-dark);
+}
+
+.subtitle {
+    font-size: 14px;
+    opacity: 0.9;
+    font-weight: 300;
+    color: var(--text-on-dark);
+}
+
+.header-right {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.control-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-on-dark);
+}
+
+.select-control {
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--text-primary);
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.select-control:hover {
+    border-color: var(--primary-color);
+}
+
+.select-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-fade);
+}
+
+.select-control option {
+    background: #fff;
+    color: var(--text-primary);
+}
+
+/* 期限选择器 */
+.tenor-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tenor-checkbox {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+}
+
+.tenor-checkbox:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.tenor-checkbox input {
+    margin: 0;
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+.tenor-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid var(--border-header);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* KPI Cards */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 15px;
+    padding: 30px;
+    background: var(--bg-section-alt);
+}
+
+.kpi-card {
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.kpi-title {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.kpi-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.kpi-unit {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* Chart Sections */
+.chart-section {
+    padding: 30px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.chart-section.full-width {
+    background: var(--bg-section-alt);
+}
+
+.chart-section h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.chart-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 15px 20px 15px 15px;
+    box-shadow: var(--shadow-sm);
+    overflow: visible;
+    border: 1px solid var(--border-color);
+}
+
+.chart-container.large {
+    height: 500px;
+}
+
+.chart-container.medium {
+    height: 350px;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+}
+
+.charts-grid .chart-section {
+    border-bottom: none;
+    border-right: 1px solid var(--border-color);
+}
+
+.charts-grid .chart-section:last-child {
+    border-right: none;
+}
+
+/* Statistics Section */
+.statistics-section {
+    padding: 30px;
+    background: var(--bg-section-alt);
+}
+
+.statistics-section h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.stats-table {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.stats-table h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+table thead {
+    background: var(--bg-section-alt);
+}
+
+table th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border-color);
+}
+
+table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+table tbody tr:hover {
+    background: var(--primary-fade);
+}
+
+table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Footer */
+.footer {
+    background: var(--bg-section-alt);
+    padding: 20px 30px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+.footer p {
+    margin: 5px 0;
+}
+
+/* Loading State */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(108, 92, 231, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+
+/* Tablet (768px - 1199px) */
+@media (max-width: 1199px) {
+    .kpi-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .charts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .charts-grid .chart-section:nth-child(2) {
+        border-right: none;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+    body {
+        padding: 10px;
+    }
+
+    .header {
+        padding: 20px;
+    }
+
+    .header-left h1 {
+        font-size: 22px;
+    }
+
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 20px;
+        gap: 15px;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .charts-grid .chart-section {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-section {
+        padding: 20px;
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+
+    .chart-container.large {
+        height: 350px;
+    }
+
+    .control-group {
+        flex: 1;
+    }
+
+    .select-control {
+        flex: 1;
+    }
+
+    .header-right {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tenor-selector {
+        justify-content: center;
+    }
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .container {
+        box-shadow: none;
+    }
+
+    .header-right {
+        display: none;
+    }
+
+    .chart-container {
+        page-break-inside: avoid;
+    }
+
+    .kpi-card {
+        page-break-inside: avoid;
+    }
+}
