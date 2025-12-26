@@ -13,11 +13,19 @@ const ChartManager = (function() {
         plugins: {
             legend: {
                 display: true,
-                position: 'top'
+                position: 'top',
+                labels: {
+                    color: '#6B7280'
+                }
             },
             tooltip: {
                 mode: 'index',
-                intersect: false
+                intersect: false,
+                backgroundColor: 'rgba(30, 30, 47, 0.95)',
+                titleColor: '#FFFFFF',
+                bodyColor: '#E0E0E0',
+                borderColor: 'rgba(108, 92, 231, 0.5)',
+                borderWidth: 1
             }
         }
     };
@@ -40,12 +48,12 @@ const ChartManager = (function() {
 
         // 创建渐变
         const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(34, 197, 94, 0.3)');
-        gradient.addColorStop(0.5, 'rgba(239, 68, 68, 0.3)');
-        gradient.addColorStop(1, 'rgba(239, 68, 68, 0.3)');
+        gradient.addColorStop(0, 'rgba(108, 92, 231, 0.4)');
+        gradient.addColorStop(0.5, 'rgba(108, 92, 231, 0.2)');
+        gradient.addColorStop(1, 'rgba(108, 92, 231, 0.0)');
 
-        // 根据正负值设置颜色
-        const colors = data.map(d => d.value >= 0 ? '#22c55e' : '#ef4444');
+        // 根据正负值设置颜色（绿色正值，橙色负值）
+        const colors = data.map(d => d.value >= 0 ? '#4CAF50' : '#FFA500');
 
         const chartConfig = {
             type: 'line',
@@ -54,11 +62,14 @@ const ChartManager = (function() {
                 datasets: [{
                     label: '10y-2y 利差 (%)',
                     data: data.map(d => d.value),
-                    borderColor: colors,
+                    borderColor: '#6C5CE7',
                     backgroundColor: gradient,
-                    borderWidth: 1.5,
+                    borderWidth: 2,
                     pointRadius: data.length > 500 ? 0 : 2,
                     pointHoverRadius: 5,
+                    pointBackgroundColor: '#6C5CE7',
+                    pointBorderColor: '#FFFFFF',
+                    pointBorderWidth: 2,
                     fill: true,
                     tension: 0.1
                 }]
@@ -110,20 +121,32 @@ const ChartManager = (function() {
                         display: true,
                         title: {
                             display: true,
-                            text: '日期'
+                            text: '日期',
+                            color: '#6B7280'
                         },
                         ticks: {
                             maxTicksLimit: 20,
                             maxRotation: 0,
                             autoSkip: true,
-                            autoSkipPadding: 20
+                            autoSkipPadding: 20,
+                            color: '#9CA3AF'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.06)'
                         }
                     },
                     y: {
                         display: true,
                         title: {
                             display: true,
-                            text: '利差 (%)'
+                            text: '利差 (%)',
+                            color: '#6B7280'
+                        },
+                        ticks: {
+                            color: '#9CA3AF'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.06)'
                         }
                     }
                 }
@@ -142,11 +165,8 @@ const ChartManager = (function() {
     function updateTrendChart(data, annotations = null) {
         if (!charts.trend) return;
 
-        const colors = data.map(d => d.value >= 0 ? '#22c55e' : '#ef4444');
-
         charts.trend.data.labels = data.map(d => d.date);
         charts.trend.data.datasets[0].data = data.map(d => d.value);
-        charts.trend.data.datasets[0].borderColor = colors;
 
         if (annotations) {
             charts.trend.options.plugins.annotation.annotations = {
@@ -182,9 +202,10 @@ const ChartManager = (function() {
                 datasets: [{
                     label: '持续天数',
                     data: data,
-                    backgroundColor: 'rgba(239, 68, 68, 0.7)',
-                    borderColor: 'rgba(239, 68, 68, 1)',
-                    borderWidth: 1
+                    backgroundColor: 'rgba(255, 165, 0, 0.7)',
+                    borderColor: 'rgba(255, 165, 0, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
                 }]
             },
             options: {
@@ -211,7 +232,22 @@ const ChartManager = (function() {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: '天数'
+                            text: '天数',
+                            color: '#6B7280'
+                        },
+                        ticks: {
+                            color: '#9CA3AF'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.06)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#9CA3AF'
+                        },
+                        grid: {
+                            display: false
                         }
                     }
                 }
@@ -245,9 +281,10 @@ const ChartManager = (function() {
                 datasets: [{
                     label: '频数',
                     data: histogram.data,
-                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                    borderColor: 'rgba(59, 130, 246, 1)',
-                    borderWidth: 1
+                    backgroundColor: 'rgba(108, 92, 231, 0.7)',
+                    borderColor: 'rgba(108, 92, 231, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
                 }]
             },
             options: {
@@ -260,7 +297,7 @@ const ChartManager = (function() {
                                 type: 'line',
                                 xMin: mean,
                                 xMax: mean,
-                                borderColor: 'rgba(34, 197, 94, 0.8)',
+                                borderColor: 'rgba(76, 175, 80, 0.8)',
                                 borderWidth: 2,
                                 label: {
                                     display: true,
@@ -272,7 +309,7 @@ const ChartManager = (function() {
                                 type: 'line',
                                 xMin: median,
                                 xMax: median,
-                                borderColor: 'rgba(168, 85, 247, 0.8)',
+                                borderColor: 'rgba(108, 92, 231, 0.8)',
                                 borderWidth: 2,
                                 borderDash: [5, 5],
                                 label: {
@@ -288,14 +325,28 @@ const ChartManager = (function() {
                     x: {
                         title: {
                             display: true,
-                            text: '利差 (%)'
+                            text: '利差 (%)',
+                            color: '#6B7280'
+                        },
+                        ticks: {
+                            color: '#9CA3AF'
+                        },
+                        grid: {
+                            display: false
                         }
                     },
                     y: {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: '频数'
+                            text: '频数',
+                            color: '#6B7280'
+                        },
+                        ticks: {
+                            color: '#9CA3AF'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.06)'
                         }
                     }
                 }
@@ -327,12 +378,15 @@ const ChartManager = (function() {
                 datasets: [{
                     label: '30日滚动标准差',
                     data: rollingStd.map(d => d.value),
-                    borderColor: 'rgba(249, 115, 22, 1)',
-                    backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                    borderColor: 'rgba(108, 92, 231, 1)',
+                    backgroundColor: 'rgba(108, 92, 231, 0.2)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
-                    pointRadius: rollingStd.length > 500 ? 0 : 2
+                    pointRadius: rollingStd.length > 500 ? 0 : 2,
+                    pointBackgroundColor: '#6C5CE7',
+                    pointBorderColor: '#FFFFFF',
+                    pointBorderWidth: 2
                 }]
             },
             options: {
@@ -341,17 +395,29 @@ const ChartManager = (function() {
                     x: {
                         title: {
                             display: true,
-                            text: '日期'
+                            text: '日期',
+                            color: '#6B7280'
                         },
                         ticks: {
-                            maxTicksLimit: 20
+                            maxTicksLimit: 20,
+                            color: '#9CA3AF'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.06)'
                         }
                     },
                     y: {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: '标准差 (%)'
+                            text: '标准差 (%)',
+                            color: '#6B7280'
+                        },
+                        ticks: {
+                            color: '#9CA3AF'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.06)'
                         }
                     }
                 }
@@ -388,18 +454,22 @@ const ChartManager = (function() {
                         {
                             label: '平均利差 (%)',
                             data: comparisonData.avgSpread,
-                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                            borderColor: 'rgba(59, 130, 246, 1)',
+                            backgroundColor: 'rgba(108, 92, 231, 0.7)',
+                            borderColor: 'rgba(108, 92, 231, 1)',
                             borderWidth: 1,
+                            borderRadius: 6,
                             yAxisID: 'y'
                         },
                         {
                             label: '倒挂比例 (%)',
                             data: comparisonData.inversionRatio,
                             type: 'line',
-                            borderColor: 'rgba(239, 68, 68, 1)',
-                            backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                            borderColor: 'rgba(255, 165, 0, 1)',
+                            backgroundColor: 'rgba(255, 165, 0, 0.2)',
                             borderWidth: 2,
+                            pointBackgroundColor: '#FFA500',
+                            pointBorderColor: '#FFFFFF',
+                            pointBorderWidth: 2,
                             yAxisID: 'y1',
                             tension: 0.1
                         }
@@ -414,7 +484,14 @@ const ChartManager = (function() {
                             position: 'left',
                             title: {
                                 display: true,
-                                text: '平均利差 (%)'
+                                text: '平均利差 (%)',
+                                color: '#6B7280'
+                            },
+                            ticks: {
+                                color: '#9CA3AF'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.06)'
                             }
                         },
                         y1: {
@@ -423,13 +500,25 @@ const ChartManager = (function() {
                             position: 'right',
                             title: {
                                 display: true,
-                                text: '倒挂比例 (%)'
+                                text: '倒挂比例 (%)',
+                                color: '#6B7280'
+                            },
+                            ticks: {
+                                color: '#9CA3AF'
                             },
                             grid: {
                                 drawOnChartArea: false
                             },
                             max: 100,
                             min: 0
+                        },
+                        x: {
+                            ticks: {
+                                color: '#9CA3AF'
+                            },
+                            grid: {
+                                display: false
+                            }
                         }
                     }
                 }
@@ -443,27 +532,61 @@ const ChartManager = (function() {
                         {
                             label: '前6月均值',
                             data: comparisonData.preAvg,
-                            borderColor: 'rgba(34, 197, 94, 1)',
-                            backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                            borderWidth: 2
+                            borderColor: 'rgba(76, 175, 80, 1)',
+                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#4CAF50',
+                            pointBorderColor: '#FFFFFF',
+                            pointBorderWidth: 2
                         },
                         {
                             label: '期间均值',
                             data: comparisonData.duringAvg,
-                            borderColor: 'rgba(239, 68, 68, 1)',
-                            backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                            borderWidth: 2
+                            borderColor: 'rgba(255, 165, 0, 1)',
+                            backgroundColor: 'rgba(255, 165, 0, 0.2)',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#FFA500',
+                            pointBorderColor: '#FFFFFF',
+                            pointBorderWidth: 2
                         },
                         {
                             label: '后6月均值',
                             data: comparisonData.postAvg,
-                            borderColor: 'rgba(59, 130, 246, 1)',
-                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                            borderWidth: 2
+                            borderColor: 'rgba(108, 92, 231, 1)',
+                            backgroundColor: 'rgba(108, 92, 231, 0.2)',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#6C5CE7',
+                            pointBorderColor: '#FFFFFF',
+                            pointBorderWidth: 2
                         }
                     ]
                 },
-                options: defaultOptions
+                options: {
+                    ...defaultOptions,
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#9CA3AF'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.06)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#9CA3AF'
+                            },
+                            title: {
+                                display: true,
+                                text: '利差 (%)',
+                                color: '#6B7280'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.06)'
+                            }
+                        }
+                    }
+                }
             };
         } else if (type === 'seasonality') {
             chartConfig = {
@@ -473,9 +596,10 @@ const ChartManager = (function() {
                     datasets: [{
                         label: '平均利差 (%)',
                         data: comparisonData.avgSpread,
-                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                        borderColor: 'rgba(59, 130, 246, 1)',
-                        borderWidth: 1
+                        backgroundColor: 'rgba(108, 92, 231, 0.7)',
+                        borderColor: 'rgba(108, 92, 231, 1)',
+                        borderWidth: 1,
+                        borderRadius: 6
                     }]
                 },
                 options: {
@@ -484,7 +608,22 @@ const ChartManager = (function() {
                         y: {
                             title: {
                                 display: true,
-                                text: '平均利差 (%)'
+                                text: '平均利差 (%)',
+                                color: '#6B7280'
+                            },
+                            ticks: {
+                                color: '#9CA3AF'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.06)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#9CA3AF'
+                            },
+                            grid: {
+                                display: false
                             }
                         }
                     }
