@@ -5,22 +5,32 @@
 }
 
 :root {
-    --primary-color: #2563eb;
-    --primary-dark: #1d4ed8;
-    --secondary-color: #64748b;
+    --primary-color: #64748b;
+    --primary-dark: #475569;
+    --secondary-color: #94a3b8;
     --success-color: #10b981;
     --danger-color: #ef4444;
     --warning-color: #f59e0b;
     --bg-color: #f1f5f9;
     --card-bg: #ffffff;
-    --sidebar-bg: #1e293b;
-    --sidebar-text: #e2e8f0;
+    --sidebar-bg: #f8fafc;
+    --sidebar-text: #334155;
     --text-primary: #1e293b;
     --text-secondary: #64748b;
     --border-color: #e2e8f0;
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --transition: all 0.3s ease;
+
+    /* 灰白色系变量 */
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
 }
 
 body {
@@ -569,7 +579,7 @@ body {
 }
 
 .nav-card {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, var(--gray-400) 0%, var(--gray-300) 100%);
     border-radius: 0.75rem;
     box-shadow: var(--shadow-lg);
     overflow: hidden;
