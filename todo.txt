@@ -1,2 +1,2 @@
-1. serena自动运行不用确认
-2. 静态文件全部转移到static
+1. OP Vault
+2. Deep Research
