@@ -517,6 +517,23 @@ body {
     .kpi-cards {
         grid-template-columns: 1fr;
     }
+
+    .nav-card-content {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .nav-title {
+        font-size: 1.125rem;
+    }
+
+    .nav-description {
+        font-size: 0.875rem;
+    }
+
+    .btn-nav {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+    }
 }
 
 @keyframes fadeIn {
@@ -544,3 +561,84 @@ body {
 .chart-card:nth-child(1) { animation-delay: 0.2s; }
 .chart-card:nth-child(2) { animation-delay: 0.3s; }
 .chart-card:nth-child(3) { animation-delay: 0.4s; }
+
+/* 导航区域样式 */
+.navigation-section {
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.nav-card {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.nav-card:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+}
+
+.nav-card-content {
+    padding: 1.5rem 2rem;
+    color: white;
+}
+
+.nav-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.nav-icon {
+    font-size: 2rem;
+    opacity: 0.9;
+}
+
+.nav-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+}
+
+.nav-description {
+    font-size: 0.9375rem;
+    opacity: 0.95;
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+    max-width: 800px;
+}
+
+.btn-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    color: var(--primary-color);
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition: var(--transition);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-nav:hover {
+    background: #f8fafc;
+    transform: translateX(4px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.nav-arrow {
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
+}
+
+.btn-nav:hover .nav-arrow {
+    transform: translateX(4px);
+}
