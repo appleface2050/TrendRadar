@@ -65,6 +65,14 @@ const ChartManager = (function() {
             },
             options: {
                 ...defaultOptions,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 15,
+                        top: 10,
+                        bottom: 10
+                    }
+                },
                 plugins: {
                     ...defaultOptions.plugins,
                     annotation: {
@@ -105,7 +113,10 @@ const ChartManager = (function() {
                             text: '日期'
                         },
                         ticks: {
-                            maxTicksLimit: 20
+                            maxTicksLimit: 20,
+                            maxRotation: 0,
+                            autoSkip: true,
+                            autoSkipPadding: 20
                         }
                     },
                     y: {

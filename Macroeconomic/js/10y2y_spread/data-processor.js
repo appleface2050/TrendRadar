@@ -210,6 +210,12 @@ const DataProcessor = (function() {
             sampled.push(data[i]);
         }
 
+        // 确保最后一个数据点被包含
+        const lastIndex = data.length - 1;
+        if (sampled[sampled.length - 1] !== data[lastIndex]) {
+            sampled.push(data[lastIndex]);
+        }
+
         return sampled;
     }
 
