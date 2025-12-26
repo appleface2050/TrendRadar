@@ -17,8 +17,10 @@ pids/
 *.swp
 *.swo
 *~
-.serena/
 
+# MCP
+.serena/
+.ckb/
 
 
 # OS
