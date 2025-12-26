@@ -52,9 +52,6 @@ const ChartManager = (function() {
         gradient.addColorStop(0.5, 'rgba(108, 92, 231, 0.2)');
         gradient.addColorStop(1, 'rgba(108, 92, 231, 0.0)');
 
-        // 根据正负值设置颜色（绿色正值，橙色负值）
-        const colors = data.map(d => d.value >= 0 ? '#4CAF50' : '#FFA500');
-
         const chartConfig = {
             type: 'line',
             data: {
@@ -62,16 +59,23 @@ const ChartManager = (function() {
                 datasets: [{
                     label: '10y-2y 利差 (%)',
                     data: data.map(d => d.value),
-                    borderColor: '#6C5CE7',
+                    borderColor: data.map(d => d.value >= 0 ? '#4CAF50' : '#EF4444'),
                     backgroundColor: gradient,
                     borderWidth: 2,
                     pointRadius: data.length > 500 ? 0 : 2,
                     pointHoverRadius: 5,
-                    pointBackgroundColor: '#6C5CE7',
+                    pointBackgroundColor: data.map(d => d.value >= 0 ? '#4CAF50' : '#EF4444'),
                     pointBorderColor: '#FFFFFF',
                     pointBorderWidth: 2,
                     fill: true,
-                    tension: 0.1
+                    tension: 0.1,
+                    segment: {
+                        borderColor: ctx => {
+                            // 根据正负值设置颜色：绿色正值，红色负值
+                            const curr = ctx.p1.parsed.y;
+                            return curr >= 0 ? '#4CAF50' : '#EF4444';
+                        }
+                    }
                 }]
             },
             options: {
