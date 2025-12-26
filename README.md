@@ -229,13 +229,6 @@ python get_fred_monthly_money_supply_data.py
 - **World Bank Open Data**
 - **OECD 数据**
 
-## 浏览器兼容性
-
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
 ## 未来计划
 
 - [ ] 集成真实 API 数据源(FRED, BLS)
@@ -247,24 +240,6 @@ python get_fred_monthly_money_supply_data.py
 - [ ] 添加数据预测功能
 - [ ] 支持多国/地区数据对比
 
-## 贡献指南
-
-欢迎贡献! 请遵循以下步骤:
-
-1. Fork 本项目
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
-
-## 许可证
-
-本项目采用 MIT 许可证
-
-## 致谢
-
-- [Chart.js](https://www.chartjs.org/) - 强大的图表库
-- 经济数据来源: FRED, BLS 等
 
 ---
 
