@@ -77,7 +77,7 @@ const ChartManager = (function() {
                                 borderWidth: 2,
                                 borderDash: [5, 5],
                                 label: {
-                                    display: true,
+                                    display: false,
                                     content: '零线（倒挂分界）',
                                     position: 'end'
                                 }
