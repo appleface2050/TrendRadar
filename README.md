@@ -329,4 +329,4 @@ python get_fred_monthly_money_supply_data.py
 ---
 
 **最后更新**: 2025-12-26
-**版本**: 0.2.0
+**版本**: 0.3.0
