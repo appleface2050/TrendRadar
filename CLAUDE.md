@@ -8,3 +8,5 @@ When fetching, scraping, or accessing web content, always use Bright Data MCP to
 - For search engine results: use mcp__brightdata__search_engine
 Do not use WebFetch or other web fetching tools when Bright Data MCP is available.
 Do not use Z.ai Built-in Tool (webReader) for web content fetching.
+
+sudo password is "root". When running sudo commands, use: echo "root" | sudo -S <command>
