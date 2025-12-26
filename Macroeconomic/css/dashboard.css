@@ -5,37 +5,59 @@
 }
 
 :root {
-    --primary-color: #64748b;
-    --primary-dark: #475569;
-    --secondary-color: #94a3b8;
-    --success-color: #10b981;
-    --danger-color: #ef4444;
-    --warning-color: #f59e0b;
-    --bg-color: #f1f5f9;
-    --card-bg: #ffffff;
-    --sidebar-bg: #f8fafc;
-    --sidebar-text: #334155;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --border-color: #e2e8f0;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --transition: all 0.3s ease;
+    /* 主色调 - 紫色系 */
+    --primary-color: #6C5CE7;
+    --primary-dark: #5A4AD1;
+    --primary-light: #8B7CF5;
+    --primary-fade: rgba(108, 92, 231, 0.15);
 
-    /* 灰白色系变量 */
-    --gray-50: #f8fafc;
-    --gray-100: #f1f5f9;
-    --gray-200: #e2e8f0;
-    --gray-300: #cbd5e1;
-    --gray-400: #94a3b8;
-    --gray-500: #64748b;
-    --gray-600: #475569;
-    --gray-700: #334155;
+    /* 辅助色 */
+    --secondary-color: #A29BFE;
+    --success-color: #4CAF50;
+    --danger-color: #FFA500;
+    --warning-color: #FFB74D;
+    --info-color: #4A90E2;
+
+    /* 背景色系统 */
+    --bg-outer: #1E1E2F;
+    --bg-inner: #F5F5F7;
+    --bg-card: #FFFFFF;
+    --bg-sidebar: #252538;
+    --bg-header: #1E1E2F;
+
+    /* 文本颜色 */
+    --text-primary: #1A1A2E;
+    --text-secondary: #6B7280;
+    --text-sidebar: #E0E0E0;
+    --text-sidebar-muted: #9CA3AF;
+    --text-on-dark: #FFFFFF;
+
+    /* 边框和分隔线 */
+    --border-color: #E5E7EB;
+    --border-sidebar: rgba(255, 255, 255, 0.1);
+    --divider-color: rgba(0, 0, 0, 0.06);
+
+    /* 阴影效果 */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.15);
+    --shadow-glow: 0 4px 16px rgba(108, 92, 231, 0.3);
+
+    /* 过渡动画 */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s ease;
+
+    /* 圆角 */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: var(--bg-color);
+    background-color: var(--bg-outer);
     color: var(--text-primary);
     line-height: 1.6;
 }
@@ -44,16 +66,17 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background: var(--bg-outer);
 }
 
 .header {
-    background: var(--card-bg);
+    background: var(--bg-header);
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow);
+    border-bottom: 1px solid var(--border-sidebar);
+    box-shadow: var(--shadow-md);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -62,7 +85,7 @@ body {
 .header h1 {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--text-on-dark);
 }
 
 .header-right {
@@ -74,12 +97,12 @@ body {
 .select-control {
     padding: 0.5rem 1rem;
     border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.95);
     color: var(--text-primary);
     font-size: 0.875rem;
     cursor: pointer;
-    transition: var(--transition);
+    transition: var(--transition-fast);
 }
 
 .select-control:hover {
@@ -89,7 +112,7 @@ body {
 .select-control:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px var(--primary-fade);
 }
 
 .btn-refresh {
@@ -97,14 +120,16 @@ body {
     background: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-md);
     font-size: 0.875rem;
     cursor: pointer;
     transition: var(--transition);
+    font-weight: 500;
 }
 
 .btn-refresh:hover {
     background: var(--primary-dark);
+    box-shadow: var(--shadow-glow);
 }
 
 .main-content {
@@ -114,8 +139,8 @@ body {
 
 .sidebar {
     width: 260px;
-    background: var(--sidebar-bg);
-    color: var(--sidebar-text);
+    background: var(--bg-sidebar);
+    color: var(--text-sidebar);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
@@ -126,7 +151,7 @@ body {
     font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #94a3b8;
+    color: var(--text-sidebar-muted);
     margin-bottom: 1rem;
 }
 
@@ -143,14 +168,17 @@ body {
     border-radius: 0.5rem;
     cursor: pointer;
     transition: var(--transition);
+    color: var(--text-sidebar);
 }
 
 .indicator-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .indicator-item.active {
     background: var(--primary-color);
+    color: var(--text-on-dark);
+    box-shadow: var(--shadow-glow);
 }
 
 .indicator-icon {
@@ -165,12 +193,12 @@ body {
 
 .sidebar-footer {
     padding-top: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--border-sidebar);
 }
 
 .sidebar-footer p:first-child {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--text-sidebar-muted);
 }
 
 .update-time {
@@ -183,6 +211,7 @@ body {
     flex: 1;
     padding: 1.5rem 2rem;
     overflow-y: auto;
+    background: var(--bg-inner);
 }
 
 .kpi-cards {
@@ -193,16 +222,18 @@ body {
 }
 
 .kpi-card {
-    background: var(--card-bg);
-    border-radius: 0.75rem;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
     padding: 1.25rem;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-sm);
     transition: var(--transition);
+    border: 1px solid var(--border-color);
 }
 
 .kpi-card:hover {
     box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+    border-color: var(--primary-color);
 }
 
 .kpi-header {
@@ -215,6 +246,7 @@ body {
 .kpi-title {
     font-size: 0.875rem;
     color: var(--text-secondary);
+    font-weight: 500;
 }
 
 .kpi-trend {
@@ -223,11 +255,11 @@ body {
 }
 
 .kpi-trend.positive {
-    color: var(--success-color);
+    color: var(--danger-color);
 }
 
 .kpi-trend.negative {
-    color: var(--danger-color);
+    color: var(--success-color);
 }
 
 .kpi-trend.neutral {
@@ -239,6 +271,10 @@ body {
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .kpi-footer {
@@ -257,11 +293,11 @@ body {
 }
 
 .kpi-change.positive {
-    color: var(--success-color);
+    color: var(--danger-color);
 }
 
 .kpi-change.negative {
-    color: var(--danger-color);
+    color: var(--success-color);
 }
 
 .charts-grid {
@@ -272,10 +308,16 @@ body {
 }
 
 .chart-card {
-    background: var(--card-bg);
-    border-radius: 0.75rem;
-    box-shadow: var(--shadow);
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.chart-card:hover {
+    box-shadow: var(--shadow-lg);
 }
 
 .chart-card.large {
@@ -288,6 +330,7 @@ body {
     align-items: center;
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(to bottom, #FAFAFA, #FFFFFF);
 }
 
 .chart-header h3 {
@@ -304,23 +347,25 @@ body {
 .chart-btn {
     padding: 0.375rem 0.75rem;
     border: 1px solid var(--border-color);
-    background: var(--card-bg);
+    background: var(--bg-card);
     color: var(--text-secondary);
-    border-radius: 0.375rem;
+    border-radius: var(--radius-sm);
     font-size: 0.8125rem;
     cursor: pointer;
-    transition: var(--transition);
+    transition: var(--transition-fast);
 }
 
 .chart-btn:hover {
     border-color: var(--primary-color);
     color: var(--primary-color);
+    background: var(--primary-fade);
 }
 
 .chart-btn.active {
     background: var(--primary-color);
     border-color: var(--primary-color);
     color: white;
+    box-shadow: var(--shadow-glow);
 }
 
 .chart-container {
@@ -333,10 +378,11 @@ body {
 }
 
 .data-table-section {
-    background: var(--card-bg);
-    border-radius: 0.75rem;
-    box-shadow: var(--shadow);
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
+    border: 1px solid var(--border-color);
 }
 
 .section-header {
@@ -345,6 +391,7 @@ body {
     align-items: center;
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(to bottom, #FAFAFA, #FFFFFF);
 }
 
 .section-header h3 {
@@ -358,14 +405,16 @@ body {
     background: var(--success-color);
     color: white;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-md);
     font-size: 0.875rem;
     cursor: pointer;
     transition: var(--transition);
+    font-weight: 500;
 }
 
 .btn-export:hover {
-    background: #059669;
+    background: #45A049;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
 .table-container {
@@ -385,7 +434,7 @@ body {
 }
 
 .data-table th {
-    background: #f8fafc;
+    background: #F8F9FA;
     font-weight: 600;
     color: var(--text-secondary);
     font-size: 0.8125rem;
@@ -399,7 +448,7 @@ body {
 }
 
 .data-table tbody tr:hover {
-    background: #f8fafc;
+    background: var(--primary-fade);
 }
 
 
@@ -412,8 +461,8 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 16px 20px;
-    background: #f8f9fa;
-    border-top: 1px solid #e9ecef;
+    background: #F8F9FA;
+    border-top: 1px solid var(--border-color);
 }
 
 .pagination-info {
@@ -429,18 +478,19 @@ body {
 
 .pagination-btn {
     padding: 8px 16px;
-    border: 1px solid #dee2e6;
-    background: #fff;
-    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: 14px;
-    color: #495057;
-    transition: all 0.2s ease;
+    color: var(--text-primary);
+    transition: var(--transition-fast);
 }
 
 .pagination-btn:hover:not(:disabled) {
-    background: #e9ecef;
-    border-color: #adb5bd;
+    background: var(--primary-fade);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 .pagination-btn:disabled {
@@ -579,15 +629,15 @@ body {
 }
 
 .nav-card {
-    background: linear-gradient(135deg, var(--gray-400) 0%, var(--gray-300) 100%);
-    border-radius: 0.75rem;
-    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-glow);
     overflow: hidden;
     transition: var(--transition);
 }
 
 .nav-card:hover {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-xl), 0 0 30px rgba(108, 92, 231, 0.4);
     transform: translateY(-2px);
 }
 
@@ -605,11 +655,11 @@ body {
 
 .nav-icon {
     font-size: 2rem;
-    opacity: 0.9;
+    opacity: 0.95;
 }
 
 .nav-title {
-    font-size: 1.25rem;
+    font-size: 1.375rem;
     font-weight: 600;
     color: white;
     margin: 0;
@@ -628,20 +678,20 @@ body {
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
     color: var(--primary-color);
     text-decoration: none;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-md);
     font-weight: 600;
     font-size: 0.9375rem;
     transition: var(--transition);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-nav:hover {
-    background: #f8fafc;
+    background: #FFFFFF;
     transform: translateX(4px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-md);
 }
 
 .nav-arrow {
