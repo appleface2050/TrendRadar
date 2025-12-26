@@ -1,0 +1,31 @@
+# Source: U.S. Bureau of Labor Statistics
+# URL: https://www.bls.gov/news.release/cpi.nr0.htm
+# Release Date: 2025-12-18
+# Data: Consumer Price Index for All Urban Consumers (CPI-U) - Table A
+# Note: October 2025 data not collected due to lapse in appropriations
+# Units: Percent change
+# Seasonally Adjusted: May 2025 - Nov 2025
+# Unadjusted: 12 months ended Nov 2025
+
+Category,May_2025,Jun_2025,Jul_2025,Aug_2025,Sep_2025,Oct_2025,Nov_2025,12_month_nov_2025
+All items,0.1,0.3,0.2,0.4,0.3,NA,NA,2.7
+Food,0.3,0.3,0.0,0.5,0.2,NA,NA,2.6
+Food at home,0.3,0.3,-0.1,0.6,0.3,NA,NA,1.9
+Food away from home,0.3,0.4,0.3,0.3,0.1,NA,NA,3.7
+Energy,-1.0,0.9,-1.1,0.7,1.5,NA,NA,4.2
+Energy commodities,-2.4,1.0,-1.9,1.7,3.8,NA,NA,1.2
+Gasoline (all types),-2.6,1.0,-2.2,1.9,4.1,-2.1,3.0,0.9
+Fuel oil,0.9,1.3,1.8,-0.3,0.6,NA,NA,11.3
+Energy services,0.4,0.9,-0.3,-0.2,-0.7,NA,NA,7.4
+Electricity,0.9,1.0,-0.1,0.2,-0.5,NA,NA,6.9
+Utility (piped) gas service,-1.0,0.5,-0.9,-1.6,-1.2,NA,NA,9.1
+All items less food and energy,0.1,0.2,0.3,0.3,0.2,NA,NA,2.6
+Commodities less food and energy commodities,0.0,0.2,0.2,0.3,0.2,NA,NA,1.4
+New vehicles,-0.3,-0.3,0.0,0.3,0.2,0.1,0.2,0.6
+Used cars and trucks,-0.5,-0.7,0.5,1.0,-0.4,0.7,0.3,3.6
+Apparel,-0.4,0.4,0.1,0.5,0.7,NA,NA,0.2
+Medical care commodities,0.6,0.1,0.1,-0.3,-0.1,NA,NA,1.1
+Services less energy services,0.2,0.3,0.4,0.3,0.2,NA,NA,3.0
+Shelter,0.3,0.2,0.2,0.4,0.2,NA,NA,3.0
+Transportation services,-0.2,0.2,0.8,1.0,0.3,NA,NA,1.7
+Medical care services,0.2,0.6,0.8,-0.1,0.3,NA,NA,3.3

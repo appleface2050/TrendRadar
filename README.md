@@ -2,9 +2,13 @@
 
 Indeptrader 是一个独立的交易分析和宏观经济数据可视化平台,旨在帮助投资者更好地理解和分析经济指标。
 
-## 项目概述
+## 项目简介
 
-Indeptrader 提供了宏观经济数据的交互式可视化仪表板,展示关键经济指标的历史趋势和当前状态。项目采用纯前端技术栈,无需后端服务器即可运行。
+本项目用于可视化和分析美国宏观经济数据,包括:
+- GDP 增长率
+- 通货膨胀率(CPI)
+- 失业率
+- 利率
 
 ## 目录结构
 
@@ -14,67 +18,54 @@ Indeptrader/
 │   ├── index.html             # 主页面入口
 │   ├── css/
 │   │   └── styles.css         # 样式文件
-│   └── js/
-│       ├── dashboard.js       # 仪表板逻辑
-│       └── data.js            # 示例经济数据
+│   ├── js/
+│   │   ├── dashboard.js       # 仪表板逻辑
+│   │   └── data.js            # 示例经济数据
+│   └── data/
+│       └── cpi/               # CPI 数据
+│           ├── cpi_table_a_2025-11.csv         # CPI 数据表格
+│           └── cpi_table_a_2025-11_readme.md   # 数据说明文档
 ├── CompanyAnalysis/           # 公司分析模块(开发中)
 └── README.md                  # 项目文档
 ```
 
 ## 功能特性
 
-### 宏观经济仪表板 (Macroeconomic Dashboard)
+### 1. 数据仪表板
+- **KPI 指标卡**: 实时显示关键经济指标的最新值和同比变化
+- **交互式图表**: 使用 Chart.js 绘制平滑的时间序列趋势图
+- **数据表格**: 支持排序和时间范围筛选
+- **时间范围筛选**: 支持 1/3/5/10 年或全部数据
+- **响应式设计**: 支持多种设备和屏幕尺寸
 
-- **KPI 指标卡**: 展示四大核心经济指标的最新值和同比变化
-  - GDP 增长率
-  - 通货膨胀率 (CPI)
-  - 失业率
-  - 利率
-
-- **交互式图表**: 使用 Chart.js 绘制时间序列数据
-  - 平滑曲线图展示趋势
-  - 悬停交互显示详细数据
-  - 响应式设计适配不同屏幕
-
-- **数据表格**: 可排序的历史数据表
-  - 点击列标题进行升序/降序排序
-  - 显示完整的月度经济数据
-
-- **时间范围筛选**: 支持多种时间维度
-  - 最近 1 年
-  - 最近 3 年
-  - 最近 5 年
-  - 最近 10 年
-  - 全部数据
+### 2. CPI 数据分析
+- 美国劳工统计局(BLS)官方 CPI 数据
+- 包含详细的分类数据(食品、能源、住房等)
+- CSV 格式,便于分析和导入其他工具
+- 完整的数据说明文档
 
 ## 技术栈
 
-- **HTML5**: 页面结构
-- **CSS3**: 样式和响应式设计
-- **Vanilla JavaScript**: 核心逻辑(无框架依赖)
-- **Chart.js 4.4.0**: 数据可视化库
+- **前端**: HTML5, CSS3, Vanilla JavaScript (ES6+)
+- **图表库**: Chart.js 4.4.0
+- **数据格式**: JavaScript (JSON), CSV
 
 ## 快速开始
 
-### 前置要求
+### 在浏览器中打开
 
-- 现代浏览器(Chrome, Firefox, Safari, Edge)
-- 本地 Web 服务器(可选,用于避免 CORS 问题)
-
-### 安装与运行
-
-1. **克隆或下载项目**
+直接打开 [Macroeconomic/index.html](Macroeconomic/index.html) 文件即可查看仪表板:
 
 ```bash
-git clone <repository-url>
-cd Indeptrader
+# 使用命令行打开
+open Macroeconomic/index.html        # macOS
+start Macroeconomic/index.html       # Windows
+xdg-open Macroeconomic/index.html    # Linux
 ```
 
-2. **直接打开**
+### 本地服务器(推荐)
 
-双击 `Macroeconomic/index.html` 文件在浏览器中打开
-
-3. **使用本地服务器**(推荐)
+如果需要通过本地服务器运行以避免 CORS 问题:
 
 使用 Python:
 ```bash
@@ -88,20 +79,21 @@ cd Macroeconomic
 npx http-server -p 8000
 ```
 
-然后在浏览器中访问: `http://localhost:8000`
+然后在浏览器中访问: http://localhost:8000
 
 ## 数据说明
 
-当前版本使用 2015-2024 年的模拟月度数据,包含以下指标:
+### Dashboard 数据
 
-- **GDP**: 国内生产总值增长率(%)
-- **Inflation**: 通货膨胀率(消费者物价指数 CPI, %)
-- **Unemployment**: 失业率(%)
-- **Interest**: 联邦基金利率(%)
+当前仪表板使用的是示例数据(2015-2024年),包含以下指标:
+- **GDP Growth**: GDP 增长率(%)
+- **Inflation Rate**: 基于 CPI 的通货膨胀率(%)
+- **Unemployment Rate**: 失业率(%)
+- **Interest Rate**: 联邦基金利率(%)
 
-### 数据更新
+#### 数据格式
 
-要使用真实数据,请编辑 [js/data.js](Macroeconomic/js/data.js) 文件,修改 `economicData` 数组。数据格式如下:
+数据存储在 [js/data.js](Macroeconomic/js/data.js),格式如下:
 
 ```javascript
 {
@@ -112,6 +104,27 @@ npx http-server -p 8000
     interest: 0.25          // 利率(%)
 }
 ```
+
+### CPI 数据
+
+CPI 数据文件位于 [Macroeconomic/data/cpi/](Macroeconomic/data/cpi/) 目录:
+
+- **cpi_table_a_2025-11.csv**: 2025年11月 CPI Table A 数据
+  - 包含 20 个 CPI 分类项目
+  - 月度变化数据(经季节性调整)
+  - 12个月变化数据(未经调整)
+  - 完整的元数据注释
+
+- **cpi_table_a_2025-11_readme.md**: 详细的数据说明文档
+  - 数据来源和说明
+  - 表格结构解释
+  - 使用示例代码(Python、R、Excel)
+
+#### 数据来源
+
+- **CPI 数据**: U.S. Bureau of Labor Statistics (BLS)
+  - 网址: https://www.bls.gov/news.release/cpi.nr0.htm
+  - 发布日期: 2025-12-18
 
 ## 项目架构
 
@@ -164,10 +177,10 @@ npx http-server -p 8000
 ### 集成真实数据源
 
 可以替换静态数据,集成以下数据源:
-- FRED (Federal Reserve Economic Data)
-- Bureau of Labor Statistics
-- World Bank Open Data
-- OECD 数据
+- **FRED** (Federal Reserve Economic Data)
+- **Bureau of Labor Statistics**
+- **World Bank Open Data**
+- **OECD 数据**
 
 ## 浏览器兼容性
 
@@ -178,8 +191,10 @@ npx http-server -p 8000
 
 ## 未来计划
 
-- [ ] 集成真实 API 数据源
-- [ ] 添加更多经济指标(如 PMI、消费者信心等)
+- [ ] 集成真实 API 数据源(FRED, BLS)
+- [ ] 集成实时 CPI 数据到仪表板
+- [ ] 添加数据自动更新功能
+- [ ] 扩展更多经济指标(如 PMI、消费者信心等)
 - [ ] 实现数据导出功能(CSV, Excel)
 - [ ] 开发公司分析模块
 - [ ] 添加数据预测功能
@@ -197,13 +212,7 @@ npx http-server -p 8000
 
 ## 许可证
 
-本项目采用 MIT 许可证 - 查看 LICENSE 文件了解详情
-
-## 联系方式
-
-如有问题或建议,请通过以下方式联系:
-- 提交 Issue
-- 发送 Pull Request
+本项目采用 MIT 许可证
 
 ## 致谢
 
@@ -212,5 +221,5 @@ npx http-server -p 8000
 
 ---
 
-**最后更新**: 2024-12-26
+**最后更新**: 2025-12-26
 **版本**: 0.1.0
