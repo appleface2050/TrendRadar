@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10年期与2年期国债收益率利差分析</title>
+    <link rel="stylesheet" href="../css/10y2y_spread.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>10年期与2年期国债收益率利差分析</h1>
+                <p class="subtitle">10-Year vs 2-Year Treasury Yield Spread Analysis</p>
+            </div>
+            <div class="header-right">
+                <div class="control-group">
+                    <label for="timeRange">时间范围:</label>
+                    <select id="timeRange" class="select-control">
+                        <option value="1y">近1年</option>
+                        <option value="5y">近5年</option>
+                        <option value="10y">近10年</option>
+                        <option value="all" selected>全部</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="granularity">数据粒度:</label>
+                    <select id="granularity" class="select-control">
+                        <option value="day" selected>日度</option>
+                        <option value="week">周度</option>
+                        <option value="month">月度</option>
+                    </select>
+                </div>
+                <button id="resetZoom" class="btn btn-secondary">重置缩放</button>
+                <button id="exportBtn" class="btn btn-primary">导出数据</button>
+            </div>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-title">当前值</div>
+                <div class="kpi-value" id="currentValue">--</div>
+                <div class="kpi-unit">%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">历史均值</div>
+                <div class="kpi-value" id="meanValue">--</div>
+                <div class="kpi-unit">%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">倒挂天数</div>
+                <div class="kpi-value" id="inversionDays">--</div>
+                <div class="kpi-unit">天</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">波动率</div>
+                <div class="kpi-value" id="volatility">--</div>
+                <div class="kpi-unit">%</div>
+            </div>
+        </div>
+
+        <!-- Main Trend Chart -->
+        <div class="chart-section full-width">
+            <h2>长期趋势分析</h2>
+            <p class="chart-description">
+                展示10年期与2年期国债收益率利差的历史趋势。
+                <span class="positive">正值（绿色）</span>表示正常收益率曲线，
+                <span class="negative">负值（红色）</span>表示收益率曲线倒挂（衰退预警信号）。
+            </p>
+            <div class="chart-container large">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Analysis Charts Grid -->
+        <div class="charts-grid">
+            <div class="chart-section">
+                <h2>收益率曲线倒挂分析</h2>
+                <p class="chart-description">历史倒挂期持续天数（倒挂天数 > 30天）</p>
+                <div class="chart-container">
+                    <canvas id="inversionChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h2>分布统计</h2>
+                <p class="chart-description">利差值频率分布（绿线=均值，紫线=中位数）</p>
+                <div class="chart-container">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h2>波动率分析</h2>
+                <p class="chart-description">30日滚动标准差（衡量市场波动程度）</p>
+                <div class="chart-container">
+                    <canvas id="volatilityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Analysis -->
+        <div class="chart-section full-width">
+            <h2>对比分析</h2>
+            <div class="comparison-tabs">
+                <button class="tab-btn active" data-tab="decade">年代对比</button>
+                <button class="tab-btn" data-tab="recession">衰退对比</button>
+                <button class="tab-btn" data-tab="seasonality">季节性</button>
+            </div>
+            <div class="chart-container medium">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Statistics Tables -->
+        <div class="statistics-section">
+            <h2>统计指标</h2>
+            <div class="stats-grid">
+                <div class="stats-table">
+                    <h3>基础统计</h3>
+                    <div id="basicStats">加载中...</div>
+                </div>
+                <div class="stats-table">
+                    <h3>倒挂统计</h3>
+                    <div id="inversionStats">加载中...</div>
+                </div>
+                <div class="stats-table">
+                    <h3>分位数</h3>
+                    <div id="percentileStats">加载中...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>数据来源: Federal Reserve Economic Data (FRED)</p>
+            <p>数据代码: T10Y2Y (10-Year Treasury Constant Maturity Minus 2-Year)</p>
+            <p>最后更新: <span id="lastUpdate">--</span></p>
+        </footer>
+    </div>
+
+    <!-- Load Scripts -->
+    <script src="../js/10y2y_spread/data-processor.js"></script>
+    <script src="../js/10y2y_spread/inversion-analyzer.js"></script>
+    <script src="../js/10y2y_spread/statistics.js"></script>
+    <script src="../js/10y2y_spread/comparison.js"></script>
+    <script src="../js/10y2y_spread/chart-manager.js"></script>
+    <script src="../js/10y2y_spread/app.js"></script>
+
+    <script>
+        // 更新最后更新时间
+        document.getElementById('lastUpdate').textContent = new Date().toLocaleString('zh-CN');
+    </script>
+</body>
+</html>
