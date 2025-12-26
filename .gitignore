@@ -21,7 +21,7 @@ pids/
 # MCP
 .serena/
 .ckb/
-
+.scip/
 
 # OS
 .DS_Store
