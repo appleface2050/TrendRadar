@@ -1,0 +1,86 @@
+{
+    "面向宏观、行业与公司对比分析的金融看板：风格、架构与实现路径.md": {
+        "hash": "16c5f4d71ae8eaae9229d43c34595c5b",
+        "document_id": "2004921721492230144",
+        "upload_time": "2025-12-27T22:26:02.797924",
+        "file_size": 19284,
+        "file_mtime": 1766825707.895223
+    },
+    "构建面向复杂分析的本地知识库系统：架构、实现与演进路线深度指南.md": {
+        "hash": "fc4980e3948c961868579c0b432c8fee",
+        "document_id": "2004921722490474496",
+        "upload_time": "2025-12-27T22:26:03.141636",
+        "file_size": 20504,
+        "file_mtime": 1766804880.6854162
+    },
+    "面向中国A股自营交易的中低频量化因子挖掘：从研究到生产的完整闭环.md": {
+        "hash": "368eb859ae2659cb0c699a1489fdbe8d",
+        "document_id": "2004921723979448320",
+        "upload_time": "2025-12-27T22:26:03.401461",
+        "file_size": 21124,
+        "file_mtime": 1766799502.7580552
+    },
+    "知识库文档组织方案.md": {
+        "hash": "1bb048d6635c978b6f8ff823e720f491",
+        "document_id": "2004923168418037760",
+        "upload_time": "2025-12-27T22:31:47.636616",
+        "file_size": 4785,
+        "file_mtime": 1766845893.5889065
+    },
+    "QUICK_START.md": {
+        "hash": "e47ce0c153891ab8dc78379fbd9b8d2f",
+        "document_id": "2004921725615235072",
+        "upload_time": "2025-12-27T22:26:03.882547",
+        "file_size": 1103,
+        "file_mtime": 1766831752.7361288
+    },
+    "claude-skills-guide.md": {
+        "hash": "c596f92d89a4de29efc4ada46a8565d5",
+        "document_id": "2004921727137751040",
+        "upload_time": "2025-12-27T22:26:04.201267",
+        "file_size": 13923,
+        "file_mtime": 1766839651.4523127
+    },
+    "README.md": {
+        "hash": "f9bd0727c58dad97ccedac312f0937f1",
+        "document_id": "2004921728224083968",
+        "upload_time": "2025-12-27T22:26:04.450785",
+        "file_size": 2620,
+        "file_mtime": 1766797179.2380507
+    },
+    "DEPLOYMENT_GUIDE.md": {
+        "hash": "7383a44901014b732fee2bc3998672bd",
+        "document_id": "2004921729281056768",
+        "upload_time": "2025-12-27T22:26:04.713925",
+        "file_size": 6594,
+        "file_mtime": 1766832043.06993
+    },
+    "DEPLOYMENT_CONVERSATION.md": {
+        "hash": "70e5bfea711dc95c062aab65879c30e7",
+        "document_id": "2004921730719686656",
+        "upload_time": "2025-12-27T22:26:05.079798",
+        "file_size": 8533,
+        "file_mtime": 1766832043.06993
+    },
+    "MCP_Top100_Summary.md": {
+        "hash": "c714cb6441351e8a292559f21cf21b96",
+        "document_id": "2004921731688570880",
+        "upload_time": "2025-12-27T22:26:05.356710",
+        "file_size": 14089,
+        "file_mtime": 1766760006.7115476
+    },
+    "智能知识库上传脚本使用指南.md": {
+        "hash": "c07ce01fc8f911ffb5e6d08d5dfc4ac4",
+        "document_id": "2004923169529540608",
+        "upload_time": "2025-12-27T22:31:47.906492",
+        "file_size": 11570,
+        "file_mtime": 1766845893.5847728
+    },
+    "BigModel_Knowledge_MCP_Server_使用文档.md": {
+        "hash": "3961f1fc40e7c5982562f9337cf98d7d",
+        "document_id": "2004923170662010880",
+        "upload_time": "2025-12-27T22:31:48.171339",
+        "file_size": 13457,
+        "file_mtime": 1766845893.5847728
+    }
+}

@@ -1,0 +1,1 @@
+/home/shang/git/Indeptrader/docs/deep-research/QUICK_START.md
