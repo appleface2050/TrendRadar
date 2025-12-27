@@ -67,3 +67,7 @@ wheels/
 
 # Environment variables (contains API keys)
 .env
+
+# Environment APK KEY, password etc...
+
+confidential.json

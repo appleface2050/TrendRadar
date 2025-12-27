@@ -27,3 +27,4 @@ deep-research所在目录: /home/shang/git/deep-research
 DeepSeek API Key:  ***REMOVED***
 Firecrawl API Key:  ***REMOVED***
 
+环境说明：运行于windows10的WSL环境
