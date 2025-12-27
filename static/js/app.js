@@ -200,8 +200,8 @@ function createTrendChart() {
     }
 
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(108, 92, 231, 0.4)');
-    gradient.addColorStop(1, 'rgba(108, 92, 231, 0.0)');
+    gradient.addColorStop(0, 'rgba(124, 58, 237, 0.4)');
+    gradient.addColorStop(1, 'rgba(124, 58, 237, 0.0)');
 
     charts.trend = new Chart(ctx, {
         type: 'line',
@@ -210,14 +210,14 @@ function createTrendChart() {
             datasets: [{
                 label: indicator.name,
                 data: data.map(d => d.value),
-                borderColor: '#6C5CE7',
+                borderColor: '#7C3AED',
                 backgroundColor: gradient,
                 borderWidth: 3,
                 fill: true,
                 tension: 0.4,
                 pointRadius: 5,
                 pointHoverRadius: 7,
-                pointBackgroundColor: '#6C5CE7',
+                pointBackgroundColor: '#7C3AED',
                 pointBorderColor: '#FFFFFF',
                 pointBorderWidth: 2
             }]
@@ -234,13 +234,13 @@ function createTrendChart() {
                     display: false
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(30, 30, 47, 0.95)',
+                    backgroundColor: 'rgba(30, 30, 30, 0.95)',
                     titleColor: '#FFFFFF',
-                    bodyColor: '#E0E0E0',
+                    bodyColor: 'rgba(255, 255, 255, 0.87)',
                     padding: 14,
                     cornerRadius: 10,
                     displayColors: false,
-                    borderColor: 'rgba(108, 92, 231, 0.5)',
+                    borderColor: 'rgba(124, 58, 237, 0.5)',
                     borderWidth: 1,
                     callbacks: {
                         label: function(context) {
@@ -256,7 +256,7 @@ function createTrendChart() {
                         drawBorder: false
                     },
                     ticks: {
-                        color: '#9CA3AF',
+                        color: 'rgba(255, 255, 255, 0.60)',
                         font: {
                             size: 12
                         }
@@ -264,11 +264,11 @@ function createTrendChart() {
                 },
                 y: {
                     grid: {
-                        color: 'rgba(0, 0, 0, 0.06)',
+                        color: 'rgba(255, 255, 255, 0.06)',
                         drawBorder: false
                     },
                     ticks: {
-                        color: '#9CA3AF',
+                        color: 'rgba(255, 255, 255, 0.60)',
                         font: {
                             size: 12
                         },
@@ -297,10 +297,10 @@ function createYoYChart() {
             datasets: [{
                 label: '同比变化',
                 data: data.map(d => d.yoy),
-                backgroundColor: data.map(d => d.yoy >= 0 ? '#FFA500' : '#4CAF50'),
+                backgroundColor: data.map(d => d.yoy >= 0 ? '#FF5252' : '#00E676'),
                 borderRadius: 6,
                 borderSkipped: false,
-                hoverBackgroundColor: data.map(d => d.yoy >= 0 ? '#FFB74D' : '#66BB6A')
+                hoverBackgroundColor: data.map(d => d.yoy >= 0 ? '#FF6B6B' : '#00E676')
             }]
         },
         options: {
@@ -311,9 +311,9 @@ function createYoYChart() {
                     display: false
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(30, 30, 47, 0.95)',
+                    backgroundColor: 'rgba(30, 30, 30, 0.95)',
                     titleColor: '#FFFFFF',
-                    bodyColor: '#E0E0E0',
+                    bodyColor: 'rgba(255, 255, 255, 0.87)',
                     padding: 14,
                     cornerRadius: 10,
                     callbacks: {
@@ -330,7 +330,7 @@ function createYoYChart() {
                         drawBorder: false
                     },
                     ticks: {
-                        color: '#9CA3AF',
+                        color: 'rgba(255, 255, 255, 0.60)',
                         maxRotation: 45,
                         font: {
                             size: 11
@@ -339,11 +339,11 @@ function createYoYChart() {
                 },
                 y: {
                     grid: {
-                        color: 'rgba(0, 0, 0, 0.06)',
+                        color: 'rgba(255, 255, 255, 0.06)',
                         drawBorder: false
                     },
                     ticks: {
-                        color: '#9CA3AF',
+                        color: 'rgba(255, 255, 255, 0.60)',
                         callback: function(value) {
                             return value.toFixed(0) + '%';
                         }
@@ -372,9 +372,9 @@ function createDistributionChart() {
             datasets: [{
                 data: histogram.counts,
                 backgroundColor: [
-                    '#6C5CE7', '#8B7CF5', '#A29BFE', '#BDB2FF',
-                    '#D9CDFF', '#E8E4FF', '#F0EDFF', '#F5F3FF',
-                    '#E0D9FF', '#C9BEFF'
+                    '#7C3AED', '#8B5CF6', '#A78BFA', '#C4B5FD',
+                    '#DDD6FE', '#EDE9FE', '#F5F3FF', '#FAF9FF',
+                    '#E9D5FF', '#D8B4FE'
                 ],
                 borderWidth: 0,
                 hoverOffset: 8
@@ -393,15 +393,15 @@ function createDistributionChart() {
                         font: {
                             size: 11
                         },
-                        color: '#6B7280',
+                        color: 'rgba(255, 255, 255, 0.60)',
                         usePointStyle: true,
                         pointStyle: 'circle'
                     }
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(30, 30, 47, 0.95)',
+                    backgroundColor: 'rgba(30, 30, 30, 0.95)',
                     titleColor: '#FFFFFF',
-                    bodyColor: '#E0E0E0',
+                    bodyColor: 'rgba(255, 255, 255, 0.87)',
                     padding: 14,
                     cornerRadius: 10,
                     callbacks: {

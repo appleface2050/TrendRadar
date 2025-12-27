@@ -36,16 +36,16 @@ const ChartManager = (function() {
                 display: true,
                 position: 'top',
                 labels: {
-                    color: '#6B7280'
+                    color: 'rgba(255, 255, 255, 0.60)'
                 }
             },
             tooltip: {
                 mode: 'index',
                 intersect: false,
-                backgroundColor: 'rgba(30, 30, 47, 0.95)',
+                backgroundColor: 'rgba(30, 30, 30, 0.95)',
                 titleColor: '#FFFFFF',
-                bodyColor: '#E0E0E0',
-                borderColor: 'rgba(108, 92, 231, 0.5)',
+                bodyColor: 'rgba(255, 255, 255, 0.87)',
+                borderColor: 'rgba(124, 58, 237, 0.5)',
                 borderWidth: 1
             }
         }
@@ -138,17 +138,17 @@ const ChartManager = (function() {
                         title: {
                             display: true,
                             text: '日期',
-                            color: '#6B7280'
+                            color: 'rgba(255, 255, 255, 0.60)'
                         },
                         ticks: {
                             maxTicksLimit: 20,
                             maxRotation: 0,
                             autoSkip: true,
                             autoSkipPadding: 20,
-                            color: '#9CA3AF'
+                            color: 'rgba(255, 255, 255, 0.60)'
                         },
                         grid: {
-                            color: 'rgba(0, 0, 0, 0.06)'
+                            color: 'rgba(255, 255, 255, 0.06)'
                         }
                     },
                     y: {
@@ -156,16 +156,16 @@ const ChartManager = (function() {
                         title: {
                             display: true,
                             text: '收益率 (%)',
-                            color: '#6B7280'
+                            color: 'rgba(255, 255, 255, 0.60)'
                         },
                         ticks: {
-                            color: '#9CA3AF',
+                            color: 'rgba(255, 255, 255, 0.60)',
                             callback: function(value) {
                                 return value.toFixed(2) + '%';
                             }
                         },
                         grid: {
-                            color: 'rgba(0, 0, 0, 0.06)'
+                            color: 'rgba(255, 255, 255, 0.06)'
                         }
                     }
                 }

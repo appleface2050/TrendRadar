@@ -5,48 +5,53 @@
 }
 
 :root {
-    /* 主色调 - 紫色系 */
-    --primary-color: #6C5CE7;
-    --primary-dark: #5A4AD1;
-    --primary-light: #8B7CF5;
-    --primary-fade: rgba(108, 92, 231, 0.15);
+    /* 主色调 - 现代化紫色系 */
+    --primary-color: #7C3AED;
+    --primary-dark: #6D28D9;
+    --primary-light: #A78BFA;
+    --primary-fade: rgba(124, 58, 237, 0.15);
 
     /* 辅助色 */
-    --secondary-color: #A29BFE;
-    --success-color: #4CAF50;
-    --danger-color: #FFA500;
+    --secondary-color: #A78BFA;
+    --success-color: #00E676;
+    --danger-color: #FF5252;
     --warning-color: #FFB74D;
     --info-color: #4A90E2;
 
-    /* 背景色系统 */
-    --bg-outer: #1E1E2F;
-    --bg-inner: #F5F5F7;
-    --bg-card: #FFFFFF;
-    --bg-sidebar: #252538;
-    --bg-header: #1E1E2F;
+    /* 背景色系统 - 深色主题 */
+    --bg-body: #121212;
+    --bg-surface: #1E1E1E;
+    --bg-surface-alt: #252525;
+    --bg-card: #1E1E1E;
+    --bg-sidebar: #0A0A0A;
+    --bg-header: #121212;
+    --bg-outer: #121212;
+    --bg-inner: #121212;
 
-    /* 文本颜色 */
-    --text-primary: #1A1A2E;
-    --text-secondary: #6B7280;
-    --text-sidebar: #E0E0E0;
-    --text-sidebar-muted: #9CA3AF;
+    /* 文本颜色 - 深色主题 */
+    --text-primary: rgba(255, 255, 255, 0.87);
+    --text-secondary: rgba(255, 255, 255, 0.60);
+    --text-tertiary: rgba(255, 255, 255, 0.40);
+    --text-disabled: rgba(255, 255, 255, 0.25);
+    --text-sidebar: rgba(255, 255, 255, 0.87);
+    --text-sidebar-muted: rgba(255, 255, 255, 0.50);
     --text-on-dark: #FFFFFF;
 
     /* 边框和分隔线 */
-    --border-color: #E5E7EB;
-    --border-sidebar: rgba(255, 255, 255, 0.1);
-    --divider-color: rgba(0, 0, 0, 0.06);
+    --border-color: rgba(255, 255, 255, 0.10);
+    --border-sidebar: rgba(255, 255, 255, 0.08);
+    --divider-color: rgba(255, 255, 255, 0.06);
 
-    /* 阴影效果 */
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-    --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.15);
-    --shadow-glow: 0 4px 16px rgba(108, 92, 231, 0.3);
+    /* 阴影效果 - 深色主题优化 */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 4px 16px rgba(124, 58, 237, 0.4);
 
     /* 过渡动画 */
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-fast: all 0.15s ease;
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 
     /* 圆角 */
     --radius-sm: 6px;
@@ -98,7 +103,7 @@ body {
     padding: 0.5rem 1rem;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--bg-surface);
     color: var(--text-primary);
     font-size: 0.875rem;
     cursor: pointer;
@@ -228,6 +233,18 @@ body {
     box-shadow: var(--shadow-sm);
     transition: var(--transition);
     border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
 }
 
 .kpi-card:hover {
@@ -252,29 +269,33 @@ body {
 .kpi-trend {
     font-size: 1.25rem;
     font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    display: inline-block;
 }
 
 .kpi-trend.positive {
     color: var(--danger-color);
+    background: rgba(255, 82, 82, 0.15);
 }
 
 .kpi-trend.negative {
     color: var(--success-color);
+    background: rgba(0, 230, 118, 0.15);
 }
 
 .kpi-trend.neutral {
     color: var(--warning-color);
+    background: rgba(255, 183, 77, 0.15);
 }
 
 .kpi-value {
-    font-size: 1.75rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-family: 'Roboto Mono', 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+    letter-spacing: -0.02em;
 }
 
 .kpi-footer {
@@ -330,7 +351,7 @@ body {
     align-items: center;
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--border-color);
-    background: linear-gradient(to bottom, #FAFAFA, #FFFFFF);
+    background: var(--bg-surface-alt);
 }
 
 .chart-header h3 {
@@ -347,12 +368,13 @@ body {
 .chart-btn {
     padding: 0.375rem 0.75rem;
     border: 1px solid var(--border-color);
-    background: var(--bg-card);
+    background: var(--bg-surface);
     color: var(--text-secondary);
     border-radius: var(--radius-sm);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     cursor: pointer;
     transition: var(--transition-fast);
+    font-weight: 500;
 }
 
 .chart-btn:hover {
@@ -391,7 +413,7 @@ body {
     align-items: center;
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--border-color);
-    background: linear-gradient(to bottom, #FAFAFA, #FFFFFF);
+    background: var(--bg-surface-alt);
 }
 
 .section-header h3 {
@@ -428,61 +450,65 @@ body {
 
 .data-table th,
 .data-table td {
-    padding: 0.875rem 1rem;
+    padding: 0.625rem 0.875rem;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
 }
 
 .data-table th {
-    background: #F8F9FA;
+    background: var(--bg-surface-alt);
     font-weight: 600;
     color: var(--text-secondary);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.025em;
+    letter-spacing: 0.05em;
 }
 
 .data-table td {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     color: var(--text-primary);
 }
 
 .data-table tbody tr:hover {
-    background: var(--primary-fade);
+    background: var(--bg-surface-alt);
 }
-
 
 .data-table tbody tr:last-child td {
     border-bottom: none;
+}
+
+/* 为数字列添加等宽字体 */
+.data-table td:not(:first-child) {
+    font-family: 'Roboto Mono', 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
 }
 
 .pagination-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
-    background: #F8F9FA;
+    padding: 1rem 1.25rem;
+    background: var(--bg-surface-alt);
     border-top: 1px solid var(--border-color);
 }
 
 .pagination-info {
-    font-size: 14px;
-    color: #6c757d;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
 }
 
 .pagination-buttons {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem;
 }
 
 .pagination-btn {
-    padding: 8px 16px;
+    padding: 0.5rem 1rem;
     border: 1px solid var(--border-color);
-    background: var(--bg-card);
+    background: var(--bg-surface);
     border-radius: var(--radius-sm);
     cursor: pointer;
-    font-size: 14px;
+    font-size: 0.875rem;
     color: var(--text-primary);
     transition: var(--transition-fast);
 }
@@ -499,8 +525,8 @@ body {
 }
 
 .page-info {
-    font-size: 14px;
-    color: #495057;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
     min-width: 80px;
     text-align: center;
 }

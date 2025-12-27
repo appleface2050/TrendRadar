@@ -15,16 +15,16 @@ const ChartManager = (function() {
                 display: true,
                 position: 'top',
                 labels: {
-                    color: '#6B7280'
+                    color: 'rgba(255, 255, 255, 0.60)'
                 }
             },
             tooltip: {
                 mode: 'index',
                 intersect: false,
-                backgroundColor: 'rgba(30, 30, 47, 0.95)',
+                backgroundColor: 'rgba(30, 30, 30, 0.95)',
                 titleColor: '#FFFFFF',
-                bodyColor: '#E0E0E0',
-                borderColor: 'rgba(108, 92, 231, 0.5)',
+                bodyColor: 'rgba(255, 255, 255, 0.87)',
+                borderColor: 'rgba(124, 58, 237, 0.5)',
                 borderWidth: 1
             }
         }
@@ -48,9 +48,9 @@ const ChartManager = (function() {
 
         // 创建渐变
         const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(108, 92, 231, 0.4)');
-        gradient.addColorStop(0.5, 'rgba(108, 92, 231, 0.2)');
-        gradient.addColorStop(1, 'rgba(108, 92, 231, 0.0)');
+        gradient.addColorStop(0, 'rgba(124, 58, 237, 0.4)');
+        gradient.addColorStop(0.5, 'rgba(124, 58, 237, 0.2)');
+        gradient.addColorStop(1, 'rgba(124, 58, 237, 0.0)');
 
         const chartConfig = {
             type: 'line',
@@ -59,12 +59,12 @@ const ChartManager = (function() {
                 datasets: [{
                     label: '10y-2y 利差 (%)',
                     data: data.map(d => d.value),
-                    borderColor: data.map(d => d.value >= 0 ? '#4CAF50' : '#EF4444'),
+                    borderColor: data.map(d => d.value >= 0 ? '#00E676' : '#FF5252'),
                     backgroundColor: gradient,
                     borderWidth: 2,
                     pointRadius: data.length > 500 ? 0 : 2,
                     pointHoverRadius: 5,
-                    pointBackgroundColor: data.map(d => d.value >= 0 ? '#4CAF50' : '#EF4444'),
+                    pointBackgroundColor: data.map(d => d.value >= 0 ? '#00E676' : '#FF5252'),
                     pointBorderColor: '#FFFFFF',
                     pointBorderWidth: 2,
                     fill: true,
@@ -73,7 +73,7 @@ const ChartManager = (function() {
                         borderColor: ctx => {
                             // 根据正负值设置颜色：绿色正值，红色负值
                             const curr = ctx.p1.parsed.y;
-                            return curr >= 0 ? '#4CAF50' : '#EF4444';
+                            return curr >= 0 ? '#00E676' : '#FF5252';
                         }
                     }
                 }]
@@ -126,17 +126,17 @@ const ChartManager = (function() {
                         title: {
                             display: true,
                             text: '日期',
-                            color: '#6B7280'
+                            color: 'rgba(255, 255, 255, 0.60)'
                         },
                         ticks: {
                             maxTicksLimit: 20,
                             maxRotation: 0,
                             autoSkip: true,
                             autoSkipPadding: 20,
-                            color: '#9CA3AF'
+                            color: 'rgba(255, 255, 255, 0.60)'
                         },
                         grid: {
-                            color: 'rgba(0, 0, 0, 0.06)'
+                            color: 'rgba(255, 255, 255, 0.06)'
                         }
                     },
                     y: {
@@ -144,13 +144,13 @@ const ChartManager = (function() {
                         title: {
                             display: true,
                             text: '利差 (%)',
-                            color: '#6B7280'
+                            color: 'rgba(255, 255, 255, 0.60)'
                         },
                         ticks: {
-                            color: '#9CA3AF'
+                            color: 'rgba(255, 255, 255, 0.60)'
                         },
                         grid: {
-                            color: 'rgba(0, 0, 0, 0.06)'
+                            color: 'rgba(255, 255, 255, 0.06)'
                         }
                     }
                 }
