@@ -1,0 +1,5 @@
+1. 让 firecrawl mcp "mcp__firecrawl__" 无需询问
+2. 取消deep-research自动运行
+3. 
+
+
