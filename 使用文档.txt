@@ -1,0 +1,13 @@
+1. 启动deep-research
+
+cd ~/git/deep-research && nohup pnpm dev > /tmp/deep-research.log 2>&1 &
+
+2. 上传知识库到bigmodel.cn
+
+sh /home/shang/git/Indeptrader/knowledge-base/scripts/auto-sync.sh
+
+
+
+
+
+
