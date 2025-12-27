@@ -1,10 +1,7 @@
-1. openskills 以及尝试上次没有安装的那个mcp
-https://mcpmarket.com/zh/server/skill-seeker
+1. https://mcpmarket.com/zh/server/skill-seeker
 
 2. Running需要彻底重写。
 
-4. 将static放回到Macroeconomic里面
-
-6. https://docs.bigmodel.cn/cn/guide/tools/knowledge/contextual 提供买1GB免费知识库功能
-
 7. 测试claude skills
+
+8. @.upload_record.json 不应该提交到github上，但是当前已经提交进去了
