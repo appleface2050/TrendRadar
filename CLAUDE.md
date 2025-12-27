@@ -24,7 +24,8 @@ sudo password is "root". When running sudo commands, use: echo "root" | sudo -S 
 
 deep-research所在目录: /home/shang/git/deep-research
 
-DeepSeek API Key:  ***REMOVED***
-Firecrawl API Key:  ***REMOVED***
+confidential.json里面存放着项目所需的密码，密钥等信息
 
 环境说明：运行于windows10的WSL环境
+
+安装python library时，尽量使用国内镜像：https://pypi.tuna.tsinghua.edu.cn/simple

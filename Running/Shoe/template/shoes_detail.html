@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoe Information</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Shoe Information</h1>
+
+    <table>
+        <tr>
+            <th>Shoe Name</th>
+            <th>Price</th>
+            <th>Color</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+        </tr>
+
+        {% for name, info in shoe_info.items() %}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ info.price }}</td>
+                <td style="background-color: {{ info.color }}; color: white;">{{ info.color }}</td>
+                <td>{{ info.start_date.strftime('%Y-%m-%d') if info.start_date else '' }}</td>
+                <td>{{ info.end_date.strftime('%Y-%m-%d') if info.end_date else '' }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

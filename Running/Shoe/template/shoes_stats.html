@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoe Data</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Shoe Name</th>
+                <th>Total KM</th>
+                <th>Price</th>
+                <th>Unit Price</th>
+                <th>Expected Total KM(0.8/km)</th>
+                <th>Marginal KM</th>
+                <th>Expected Total KM </th>
+                <th>Expected Unit Price</th>
+                <th>Progress</th>
+                <th>KM per Month</th>
+                <!-- Add more columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in data %}
+                <tr>
+                    <td>{{ entry.shoe_name }}</td>
+                    <td>{{ entry.total_km }}</td>
+                    <td>{{ entry.price }}</td>
+
+                    <td>{{ entry.unit_price }}</td>
+                    <td>{{ entry.expected_km }}</td>
+                    <td>{{ entry.marginal_km }}</td>
+                    <td>{{ entry.expected_total_km }}</td>
+                    <td>{{ entry.expected_unit_price }}</td>
+                    <td>{{ entry.progress }}</td>
+                    <td>{{ entry.used_km_per_month }}</td>
+
+                    <!-- Add more cells as needed -->
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

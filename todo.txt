@@ -1,5 +1,4 @@
+1. openskills 以及尝试上次没有安装的那个mcp
+https://mcpmarket.com/zh/server/skill-seeker
 
-2. 取消deep-research自动运行
-
-
-
+2. Running需要彻底重写。
