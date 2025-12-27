@@ -2,3 +2,11 @@
 https://mcpmarket.com/zh/server/skill-seeker
 
 2. Running需要彻底重写。
+
+3. QUICK_START.md存在严重密钥泄露，且已经提交到github了。
+
+
+
+
+
+
