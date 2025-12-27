@@ -5,8 +5,8 @@ https://mcpmarket.com/zh/server/skill-seeker
 
 3. QUICK_START.md存在严重密钥泄露，且已经提交到github了。
 
+4. 将static放回到Macroeconomic里面
 
-
-
+5. mcp__tavily__tavily_extract 无需确认
 
 
