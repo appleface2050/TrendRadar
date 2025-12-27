@@ -33,8 +33,8 @@ cd ~/git/deep-research && pnpm dev
 **文件位置**: `~/git/deep-research/.env.local`
 
 ```bash
-DEEPSEEK_API_KEY=***REMOVED***
-FIRECRAWL_API_KEY=***REMOVED***
+DEEPSEEK_API_KEY=你的密钥
+FIRECRAWL_API_KEY=你的密钥
 
 MCP_AI_PROVIDER=deepseek
 MCP_SEARCH_PROVIDER=firecrawl
