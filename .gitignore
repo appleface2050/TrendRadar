@@ -64,3 +64,6 @@ wheels/
 # Temporary files
 *.tmp
 *.temp
+
+# Environment variables (contains API keys)
+.env
