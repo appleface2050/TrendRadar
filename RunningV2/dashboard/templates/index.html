@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Running Dashboard - RQ 能力值预测</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- 引入 Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- 引入 date-fns adapter 用于 Chart.js 时间轴 -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>🏃 Running Dashboard</h1>
+        <p class="subtitle">RQ 能力值预测与分析</p>
+    </header>
+
+    <main>
+        <!-- 统计卡片区域 -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <span class="stat-label">当前 RQ</span>
+                        <span class="stat-value" id="current-rq">加载中...</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-content">
+                        <span class="stat-label">30天预测增长</span>
+                        <span class="stat-value" id="forecast-growth">-</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-content">
+                        <span class="stat-label">历史最大值</span>
+                        <span class="stat-value" id="max-rq">-</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">❄️</div>
+                    <div class="stat-content">
+                        <span class="stat-label">历史最小值</span>
+                        <span class="stat-value" id="min-rq">-</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 图表区域 -->
+        <section class="chart-section">
+            <div class="chart-header">
+                <h2>RQ 能力值预测</h2>
+                <button class="refresh-btn" onclick="loadData()">
+                    <span>🔄</span> 刷新数据
+                </button>
+            </div>
+            <div class="chart-container">
+                <canvas id="rq-chart"></canvas>
+            </div>
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <span class="legend-color" style="background: #5470c6;"></span>
+                    <span>历史数据</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: #91cc75;"></span>
+                    <span>预测值</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color legend-area" style="background: rgba(145, 204, 117, 0.2);"></span>
+                    <span>预测区间</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数据摘要 -->
+        <section class="info-section">
+            <h3>📋 数据说明</h3>
+            <ul>
+                <li><strong>数据来源：</strong>MySQL 数据库 (running_rq_record 表)</li>
+                <li><strong>预测方法：</strong>Facebook Prophet 时间序列预测</li>
+                <li><strong>预测范围：</strong>未来 30 天</li>
+                <li><strong>更新频率：</strong>手动刷新或自动同步 CSV 数据</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>RunningV2 Dashboard © 2025 | 基于 Flask + Chart.js 构建</p>
+    </footer>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
