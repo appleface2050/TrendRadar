@@ -18,6 +18,9 @@ pids/
 *.swo
 *~
 
+# 
+.claude/
+
 # MCP
 .serena/
 .ckb/
