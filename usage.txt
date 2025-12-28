@@ -20,7 +20,8 @@ python /home/shang/git/Indeptrader/knowledge-base/scripts/kb_client.py search --
 # 查看统计信息
 python /home/shang/git/Indeptrader/knowledge-base/scripts/kb_client.py stats
 
-
+# 全局指令
+cat /home/shang/.claude/CLAUDE.md
 
 
 
