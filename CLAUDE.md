@@ -45,6 +45,7 @@ When fetching, scraping, or accessing web content, follow this priority order:
    - For batch scraping: use mcp__brightdata__scrape_batch
    - For search engine results: use mcp__brightdata__search_engine
 
+Use Firecrawl to do Web Search task. 
 Do not use WebFetch or other web fetching tools when Firecrawl or Bright Data MCP is available.
 Do not use Z.ai Built-in Tool (webReader) for web content fetching.
 sudo password is "root". When running sudo commands, use: echo "root" | sudo -S <command>
