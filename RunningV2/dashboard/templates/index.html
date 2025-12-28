@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Running Dashboard - RQ 能力值预测</title>
+    <title>Running Dashboard - 能力值预测</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <!-- 引入 Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -12,8 +12,8 @@
 </head>
 <body>
     <header>
-        <h1>🏃 Running Dashboard</h1>
-        <p class="subtitle">RQ 能力值预测与分析</p>
+        <h1>Running Dashboard</h1>
+        <p class="subtitle">跑步能力预测与分析</p>
     </header>
 
     <main>
@@ -21,31 +21,50 @@
         <section class="stats-section">
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon">📊</div>
+                    <div class="stat-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
                     <div class="stat-content">
-                        <span class="stat-label">当前 RQ</span>
-                        <span class="stat-value" id="current-rq">加载中...</span>
+                        <span class="stat-label">当前能力值</span>
+                        <span class="stat-value" id="current-rq">---</span>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">📈</div>
+                    <div class="stat-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                    </div>
                     <div class="stat-content">
                         <span class="stat-label">30天预测增长</span>
-                        <span class="stat-value" id="forecast-growth">-</span>
+                        <span class="stat-value" id="forecast-growth">---</span>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🔥</div>
+                    <div class="stat-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <polyline points="12 20 12 4"></polyline>
+                            <polyline points="18 14 12 20 6 14"></polyline>
+                        </svg>
+                    </div>
                     <div class="stat-content">
                         <span class="stat-label">历史最大值</span>
-                        <span class="stat-value" id="max-rq">-</span>
+                        <span class="stat-value" id="max-rq">---</span>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">❄️</div>
+                    <div class="stat-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <polyline points="12 4 12 20"></polyline>
+                            <polyline points="18 10 12 4 6 10"></polyline>
+                        </svg>
+                    </div>
                     <div class="stat-content">
                         <span class="stat-label">历史最小值</span>
-                        <span class="stat-value" id="min-rq">-</span>
+                        <span class="stat-value" id="min-rq">---</span>
                     </div>
                 </div>
             </div>
@@ -54,9 +73,14 @@
         <!-- 图表区域 -->
         <section class="chart-section">
             <div class="chart-header">
-                <h2>RQ 能力值预测</h2>
+                <h2>能力值预测趋势</h2>
                 <button class="refresh-btn" onclick="loadData()">
-                    <span>🔄</span> 刷新数据
+                    <span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                        </svg>
+                    </span>
+                    刷新数据
                 </button>
             </div>
             <div class="chart-container">
@@ -64,15 +88,15 @@
             </div>
             <div class="chart-legend">
                 <div class="legend-item">
-                    <span class="legend-color" style="background: #5470c6;"></span>
+                    <span class="legend-color" style="background: #00f0ff; box-shadow: 0 0 10px #00f0ff;"></span>
                     <span>历史数据</span>
                 </div>
                 <div class="legend-item">
-                    <span class="legend-color" style="background: #91cc75;"></span>
+                    <span class="legend-color" style="background: #00ff88; box-shadow: 0 0 10px #00ff88;"></span>
                     <span>预测值</span>
                 </div>
                 <div class="legend-item">
-                    <span class="legend-color legend-area" style="background: rgba(145, 204, 117, 0.2);"></span>
+                    <span class="legend-color legend-area" style="background: rgba(0, 255, 136, 0.2); border: 2px solid #00ff88;"></span>
                     <span>预测区间</span>
                 </div>
             </div>
@@ -80,18 +104,18 @@
 
         <!-- 数据摘要 -->
         <section class="info-section">
-            <h3>📋 数据说明</h3>
+            <h3>数据说明</h3>
             <ul>
-                <li><strong>数据来源：</strong>MySQL 数据库 (running_rq_record 表)</li>
+                <li><strong>数据来源：</strong>MySQL 数据库运动记录</li>
                 <li><strong>预测方法：</strong>Facebook Prophet 时间序列预测</li>
                 <li><strong>预测范围：</strong>未来 30 天</li>
-                <li><strong>更新频率：</strong>手动刷新或自动同步 CSV 数据</li>
+                <li><strong>更新频率：</strong>手动刷新或自动同步数据</li>
             </ul>
         </section>
     </main>
 
     <footer>
-        <p>RunningV2 Dashboard © 2025 | 基于 Flask + Chart.js 构建</p>
+        <p>RunningV2 Dashboard © 2025 | 基于 Flask + Chart.js 构建 | 按 <kbd>R</kbd> 键快速刷新</p>
     </footer>
 
     <script src="/static/js/dashboard.js"></script>

@@ -1,9 +1,54 @@
 /**
- * RunningV2 Dashboard - 样式文件
- * 现代简洁的设计风格
+ * RunningV2 Dashboard - Clean White Sport Style
+ * 清新白色运动风格设计
  */
 
-/* 全局样式重置 */
+/* ==================== Google Fonts ==================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ==================== CSS 变量系统 ==================== */
+:root {
+    /* 主色调 */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-hover: #f1f5f9;
+
+    /* 运动配色 */
+    --primary-blue: #3b82f6;
+    --primary-green: #10b981;
+    --primary-orange: #f59e0b;
+    --primary-red: #ef4444;
+    --primary-purple: #8b5cf6;
+
+    /* 文字颜色 */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+
+    /* 边框和分割线 */
+    --border-light: #e2e8f0;
+    --border-medium: #cbd5e1;
+
+    /* 渐变 */
+    --gradient-blue: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    --gradient-green: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --gradient-orange: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    --gradient-red: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    /* 字体 */
+    --font-display: 'Poppins', sans-serif;
+    --font-body: 'Inter', sans-serif;
+
+    /* 阴影 */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* ==================== 全局样式 ==================== */
 * {
     margin: 0;
     padding: 0;
@@ -11,75 +56,165 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: var(--font-body);
+    background: var(--bg-secondary);
     min-height: 100vh;
-    color: #333;
+    color: var(--text-primary);
+    position: relative;
+    overflow-x: hidden;
 }
 
-/* 头部样式 */
+/* 背景装饰图案 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ==================== 头部样式 ==================== */
 header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 30px 20px;
+    background: var(--bg-primary);
+    padding: 50px 20px 40px;
     text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    animation: slideDown 0.6s ease-out;
+    z-index: 10;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
+    font-family: var(--font-display);
+    font-size: 2.8rem;
     font-weight: 700;
+    margin-bottom: 12px;
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+    position: relative;
+    display: inline-block;
 }
 
 .subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
-/* 主内容区域 */
+/* ==================== 主内容区域 ==================== */
 main {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 30px 20px;
+    padding: 40px 20px;
+    position: relative;
+    z-index: 1;
 }
 
-/* 统计卡片区域 */
+/* ==================== 统计卡片区域 ==================== */
 .stats-section {
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
 }
 
 .stat-card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 28px 24px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-md);
     display: flex;
     align-items: center;
-    gap: 15px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: cardFadeIn 0.5s ease-out backwards;
 }
 
+/* 卡片错落动画 */
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 卡片悬停效果 */
 .stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--border-medium);
 }
 
+/* 卡片图标容器 */
 .stat-icon {
-    font-size: 2.5rem;
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 12px;
+    border-radius: 14px;
+    position: relative;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+}
+
+.stat-card:nth-child(1) .stat-icon {
+    background: var(--gradient-blue);
+}
+
+.stat-card:nth-child(2) .stat-icon {
+    background: var(--gradient-green);
+}
+
+.stat-card:nth-child(3) .stat-icon {
+    background: var(--gradient-orange);
+}
+
+.stat-card:nth-child(4) .stat-icon {
+    background: var(--gradient-red);
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.05);
 }
 
 .stat-content {
@@ -88,82 +223,137 @@ main {
 
 .stat-label {
     display: block;
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 5px;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
 }
 
 .stat-value {
     display: block;
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #333;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
 }
 
-/* 图表区域 */
+/* ==================== 图表区域 ==================== */
 .chart-section {
-    background: white;
-    border-radius: 12px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 36px;
+    margin-bottom: 40px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    animation: cardFadeIn 0.6s ease-out 0.3s backwards;
+}
+
+.chart-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-hero);
 }
 
 .chart-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
 .chart-header h2 {
+    font-family: var(--font-display);
     font-size: 1.5rem;
-    color: #333;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
 }
 
 .refresh-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--gradient-hero);
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 0.95rem;
+    padding: 11px 24px;
+    border-radius: 10px;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 8px;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
 }
 
 .refresh-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: var(--shadow-lg);
 }
 
 .refresh-btn:active {
     transform: translateY(0);
 }
 
+.refresh-btn span {
+    transition: transform 0.4s ease;
+    display: inline-block;
+}
+
+.refresh-btn:hover span {
+    transform: rotate(180deg);
+}
+
 .chart-container {
     position: relative;
     width: 100%;
     min-height: 500px;
-    height: 60vh;
+    height: 65vh;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border-light);
 }
 
 .chart-legend {
     display: flex;
     justify-content: center;
-    gap: 30px;
-    margin-top: 20px;
+    gap: 32px;
+    margin-top: 24px;
     flex-wrap: wrap;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    font-family: var(--font-body);
     font-size: 0.9rem;
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    transition: all 0.2s ease;
+}
+
+.legend-item:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-medium);
 }
 
 .legend-color {
@@ -173,22 +363,27 @@ main {
 }
 
 .legend-area {
-    border: 2px solid #91cc75;
+    border: 2px solid #10b981;
 }
 
-/* 信息说明区域 */
+/* ==================== 信息说明区域 ==================== */
 .info-section {
-    background: white;
-    border-radius: 12px;
-    padding: 25px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 40px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    animation: cardFadeIn 0.7s ease-out 0.5s backwards;
 }
 
 .info-section h3 {
+    font-family: var(--font-display);
     font-size: 1.3rem;
-    margin-bottom: 15px;
-    color: #333;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
 .info-section ul {
@@ -197,72 +392,168 @@ main {
 }
 
 .info-section li {
-    padding: 8px 0;
-    padding-left: 25px;
+    padding: 10px 0;
+    padding-left: 28px;
     position: relative;
-    color: #555;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+    border-bottom: 1px solid var(--border-light);
 }
 
-.info-section li:before {
-    content: "•";
+.info-section li:last-child {
+    border-bottom: none;
+}
+
+/* 自定义列表图标 */
+.info-section li::before {
+    content: '✓';
     position: absolute;
     left: 0;
-    color: #667eea;
+    color: var(--primary-green);
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
 .info-section strong {
-    color: #333;
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
-/* 页脚 */
+/* ==================== 页脚 ==================== */
 footer {
     text-align: center;
-    padding: 20px;
-    color: #666;
+    padding: 30px 20px;
+    color: var(--text-muted);
     font-size: 0.9rem;
+    font-family: var(--font-body);
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border-light);
+    background: var(--bg-primary);
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
+/* ==================== 响应式设计 ==================== */
+@media (max-width: 1024px) {
     header h1 {
-        font-size: 1.8rem;
+        font-size: 2.4rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chart-container {
+        min-height: 400px;
+        height: 55vh;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 35px 20px 30px;
+    }
+
+    header h1 {
+        font-size: 2rem;
     }
 
     .subtitle {
         font-size: 0.95rem;
     }
 
+    main {
+        padding: 30px 16px;
+    }
+
     .stats-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .stat-card {
+        padding: 24px 20px;
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
     }
 
     .chart-section {
-        padding: 20px;
+        padding: 24px 20px;
     }
 
     .chart-header {
         flex-direction: column;
-        gap: 15px;
         align-items: flex-start;
+        gap: 12px;
+    }
+
+    .chart-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .chart-container {
+        min-height: 350px;
+        height: 45vh;
+        padding: 16px;
     }
 
     .chart-legend {
-        gap: 15px;
+        gap: 12px;
+    }
+
+    .legend-item {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    .info-section {
+        padding: 24px 20px;
+    }
+
+    .info-section h3 {
+        font-size: 1.2rem;
+    }
+
+    .info-section li {
+        font-size: 0.95rem;
     }
 }
 
 @media (max-width: 480px) {
-    main {
-        padding: 20px 10px;
+    header h1 {
+        font-size: 1.7rem;
+    }
+
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px 16px;
+        gap: 16px;
+    }
+
+    .stat-icon {
+        width: 52px;
+        height: 52px;
     }
 
     .stat-value {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
     }
 
     .chart-container {
         min-height: 300px;
+        height: 40vh;
+    }
+
+    .refresh-btn {
+        padding: 10px 20px;
+        font-size: 0.85rem;
     }
 }
