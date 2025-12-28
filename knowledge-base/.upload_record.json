@@ -89,5 +89,26 @@
         "upload_time": "2025-12-27T23:00:54.937878",
         "file_size": 11288,
         "file_mtime": 1766847525.1807353
+    },
+    "QDRANT_使用指南.md": {
+        "hash": "227e3811cf759a0c91677ff8bb7787cd",
+        "document_id": "2005117935844220928",
+        "upload_time": "2025-12-28T11:25:43.761049",
+        "file_size": 12245,
+        "file_mtime": 1766889676.340546
+    },
+    "QDRANT_更新说明_自动加载配置.md": {
+        "hash": "e7f2d1ad815975bf05c7143abe414800",
+        "document_id": "2005117937027014656",
+        "upload_time": "2025-12-28T11:25:44.035409",
+        "file_size": 4734,
+        "file_mtime": 1766889723.8642912
+    },
+    "README_API.md": {
+        "hash": "129aa921af9c49263052106c317a8b5a",
+        "document_id": "2005117938037837824",
+        "upload_time": "2025-12-28T11:25:44.275084",
+        "file_size": 4557,
+        "file_mtime": 1766891508.3720586
     }
 }

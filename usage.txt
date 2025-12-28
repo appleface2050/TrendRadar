@@ -2,9 +2,15 @@
 
 cd ~/git/deep-research && nohup pnpm dev > /tmp/deep-research.log 2>&1 &
 
-2. 上传知识库到bigmodel.cn
+2. 启动Qdrant FastAPI
 
-sh /home/shang/git/Indeptrader/knowledge-base/scripts/auto-sync.sh
+sh /home/shang/git/Indeptrader/knowledge-base/scripts/start_kb_server.sh
+
+
+3. Qdrant 知识库已自动集成，无需手动上传
+python3 /home/shang/git/Indeptrader/knowledge-base/scripts/qdrant_kb.py upload \
+  --dir "/home/shang/git/Indeptrader/knowledge-base"
+
 
 
 

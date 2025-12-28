@@ -1,19 +1,22 @@
-# Qdrant 本地部署方案
+# Qdrant 本地知识库部署方案（轻量级嵌入式模式）
 
 ## 一、项目背景
 
 **项目需求：**
 - 构建本地向量数据库知识库系统
-- 使用 Docker 部署 Qdrant
-- 配置数据持久化
-- 提供 Web UI 管理界面
+- 使用 Qdrant Client 嵌入式模式（无需独立服务器）
+- 实现文档的智能检索和语义搜索
 - 集成 Claude Code MCP Server
 
 **核心目标：**
-- 完全本地化，数据自主可控
-- 无 API 调用成本
-- 响应速度快
-- 支持文档的智能检索
+- ✅ 完全本地化，数据自主可控
+- ✅ 零依赖部署（无需 Docker 或独立服务器）
+- ✅ 轻量级架构，适合个人和小团队
+- ✅ 快速响应，低资源占用
+- ✅ 支持文档的智能检索和去重
+
+**技术选型说明：**
+采用 Qdrant Client 的嵌入式模式（本地持久化），而非 Docker 服务器部署。这种方案更适合个人知识库场景，具有部署简单、资源占用低、易于维护等优势。
 
 ## 二、技术架构
 
@@ -24,688 +27,739 @@
 │          Indeptrader 项目 (WSL2)                    │
 ├─────────────────────────────────────────────────────┤
 │                                                      │
-│  ┌──────────────────┐      ┌──────────────────┐   │
-│  │  Qdrant Docker   │      │  Qdrant Web UI   │   │
-│  │  (port 6333)     │◄────►│  (port 6335)     │   │
-│  │  Vector DB       │      │  Management      │   │
-│  └────────┬─────────┘      └──────────────────┘   │
-│           │                                        │
-│           │ REST API                               │
-│           ▼                                        │
-│  ┌──────────────────────────────────────────┐     │
-│  │  Python Scripts                          │     │
-│  │  - qdrant_mcp.py (MCP Server)            │     │
-│  │  - qdrant_upload.py (Smart Upload)       │     │
-│  │  - qdrant_client.py (Client Wrapper)     │     │
-│  │  - embedding_models.py (Embedding)       │     │
-│  └──────────────────────────────────────────┘     │
+│  ┌────────────────────────────────────────────┐    │
+│  │  Python 应用进程                            │    │
+│  │                                             │    │
+│  │  ┌──────────────────────────────────────┐  │    │
+│  │  │  QdrantKnowledgeBase                  │  │    │
+│  │  │  (qdrant_kb.py)                       │  │    │
+│  │  │                                       │  │    │
+│  │  │  - QdrantClient (embedded mode)      │  │    │
+│  │  │  - BGE-M3 嵌入模型                    │  │    │
+│  │  │  - 文档分块 & 向量化                  │  │    │
+│  │  │  - 智能去重（MD5 + 向量相似度）       │  │    │
+│  │  └──────────────────────────────────────┘  │    │
+│  │                     ↓                        │    │
+│  │  ┌──────────────────────────────────────┐  │    │
+│  │  │  本地存储                             │  │    │
+│  │  │  /home/shang/qdrant_data/            │  │    │
+│  │  │  - collection 数据                   │  │    │
+│  │  │  - 索引文件                          │  │    │
+│  │  └──────────────────────────────────────┘  │    │
+│  └────────────────────────────────────────────┘  │
 │                                                      │
-│  Data Persistence:                                  │
-│  /home/shang/data/qdrant/storage  │
+│  MCP 集成:                                           │
+│  - Claude Code ←→ Qdrant MCP Server                │
+│                                                     │
 └─────────────────────────────────────────────────────┘
 ```
 
 ### 2.2 向量嵌入方案
 
-**推荐方案：本地嵌入模型**
-- 模型: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
-- 向量维度: 384
+**当前方案：BGE-M3 本地模型**
+- 模型: `BAAI/bge-m3-base`
+- 向量维度: 1024
 - 支持中文和英文
-- 模型大小: 约 470MB
-- 优势: 无需网络调用，响应快，成本低
+- 优势:
+  - 无需网络调用，响应快
+  - 零 API 成本
+  - 数据隐私和安全
+  - 支持中英文混合检索
 
 **备选方案：云端 API**
 - DeepSeek Embedding API
 - OpenAI Embedding API
 - 适用场景: 需要更高质量的向量表示
 
+### 2.3 方案对比：嵌入式 vs Docker
+
+| 特性 | 嵌入式模式（当前方案） | Docker 服务器模式 |
+|------|---------------------|------------------|
+| **部署复杂度** | ✅ 极简（仅需 Python） | ⚠️ 需要配置 Docker |
+| **资源占用** | ✅ 低（进程内运行） | ⚠️ 较高（独立容器 2-4GB） |
+| **启动速度** | ✅ 即时启动 | ⚠️ 容器启动耗时 |
+| **并发访问** | ❌ 不支持 | ✅ 支持多进程/多用户 |
+| **Web UI** | ❌ 不支持 | ✅ 支持（需额外容器） |
+| **性能** | ⚠️ 受限（单进程） | ✅ 更好（独立服务优化） |
+| **适用规模** | < 10K 文档 | 支持 100K+ 文档 |
+| **可维护性** | ✅ 简单 | ⚠️ 需要容器运维 |
+| **备份恢复** | ✅ 文件级备份 | ⚠️ 需要快照机制 |
+
+**推荐场景：**
+- ✅ **嵌入式模式**：个人知识库、小团队、单机使用
+- ✅ **Docker 模式**：多用户环境、大规模数据、生产部署
+
 ## 三、目录结构
 
-**重要说明:** Qdrant 数据目录（storage、snapshots、backups）放在项目外的 `/home/shang/data/qdrant/`，以保持项目代码库的整洁。
-
 ```
+# 数据目录（项目外，用户主目录）
+/home/shang/qdrant_data/              # [重要] Qdrant 本地存储数据
+└── [自动生成]                        # Collection 数据和索引
+
+# 项目目录
 /home/shang/git/Indeptrader/
-├── docker/
-│   ├── qdrant/
-│   │   ├── docker-compose.yml       # Qdrant 主服务
-│   │   ├── .env                     # 环境变量
-│   │   └── README.md
-│   └── qdrant-webui/
-│       ├── docker-compose.yml       # Web UI
-│       └── README.md
 ├── knowledge-base/
-│   ├── qdrant/                      # [新建] Qdrant 专用目录
-│   │   ├── scripts/
-│   │   │   ├── qdrant_client.py     # Qdrant 客户端封装
-│   │   │   ├── qdrant_mcp.py        # MCP Server
-│   │   │   ├── qdrant_upload.py     # 智能上传脚本
-│   │   │   └── embedding_models.py  # 嵌入模型
-│   │   ├── .upload_record.json      # Qdrant 上传记录
-│   │   └── README.md                # Qdrant 使用文档
-│   ├── business/
-│   ├── project/
-│   └── research/
-└── devops/                          # [新建] DevOps 脚本目录
-    ├── backup_qdrant.sh             # 备份脚本
-    └── restore_qdrant.sh            # 恢复脚本
-
-# 数据目录（项目外）
-/home/shang/data/qdrant/
-├── storage/                         # Qdrant 持久化数据
-├── snapshots/                       # 快照备份
-└── backups/                         # 压缩备份
+│   ├── scripts/
+│   │   ├── qdrant_kb.py              # [已完成] 核心知识库类
+│   │   └── test_qdrant.py            # [已完成] 测试脚本
+│   ├── business/                     # 商业文档
+│   ├── project/                      # 项目文档
+│   └── research/                     # 研究文档
+└── QDRANT_DEPLOYMENT_PLAN.md         # 本文档
 ```
 
-## 四、Docker 配置
+**数据存储说明：**
+- Qdrant 数据存储在用户主目录的 `qdrant_data/`（项目外）
+- 绝对路径：`/home/shang/qdrant_data/`
+- 数据包含：Collection 数据、向量索引、元数据
+- 代码初始化时会自动创建该目录（如果不存在）
+- 可通过 `storage_path` 参数自定义路径
 
-### 4.1 Qdrant Docker Compose
+**为什么放在用户主目录？**
+- ✅ 完全与项目代码分离
+- ✅ 方便备份和管理（独立的数据位置）
+- ✅ 符合数据与代码分离的最佳实践
+- ✅ 避免数据文件被误提交到 Git
+- ✅ 多个项目可以共享同一个知识库
 
-**文件:** `docker/qdrant/docker-compose.yml`
+## 四、核心实现
 
-```yaml
-version: '3.8'
+### 4.1 已实现文件
 
-services:
-  qdrant:
-    image: qdrant/qdrant:v1.12.0
-    container_name: indepctrader-qdrant
-    ports:
-      - "6333:6333"  # HTTP API
-      - "6334:6334"  # gRPC API
-    volumes:
-      - /home/shang/data/qdrant/storage:/qdrant/storage:cached
-    environment:
-      - QDRANT__SERVICE__HTTP_PORT=6333
-      - QDRANT__SERVICE__GRPC_PORT=6334
-      - QDRANT__LOG_LEVEL=INFO
-      - QDRANT__SERVICE__MAX_REQUEST_SIZE_MB=32
-      - QDRANT__STORAGE__PERFORMANCE__MAX_OPTIMIZATION_THREADS=2
-    deploy:
-      resources:
-        limits:
-          memory: 4G
-        reservations:
-          memory: 2G
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    networks:
-      - qdrant-network
+#### 1. `knowledge-base/scripts/qdrant_kb.py` ✅
 
-networks:
-  qdrant-network:
-    driver: bridge
-```
+**功能特性：**
+- ✅ Qdrant Client 嵌入式模式初始化
+- ✅ BGE-M3 嵌入模型支持
+- ✅ 文档解析（支持 PDF、Markdown、Word、Excel 等）
+- ✅ 智能文档分块（按段落，可配置大小）
+- ✅ 文档向量化（使用 BGE-M3）
+- ✅ 智能去重（MD5 + 文件路径）
+- ✅ 语义搜索（支持元数据过滤）
+- ✅ 文档管理（上传、删除、列表）
 
-### 4.2 Qdrant Web UI Docker Compose
-
-**文件:** `docker/qdrant-webui/docker-compose.yml`
-
-```yaml
-version: '3.8'
-
-services:
-  qdrant-webui:
-    image: qdrant/qdrant-web-ui:latest
-    container_name: indepctrader-qdrant-webui
-    ports:
-      - "6335:8080"
-    environment:
-      - QDRANT_HOST=http://indepctrader-qdrant:6333
-    depends_on:
-      - qdrant
-    restart: unless-stopped
-    networks:
-      - qdrant-network
-
-networks:
-  qdrant-network:
-    external: true
-```
-
-注意: 需要先启动 Qdrant，再启动 Web UI（或使用 `external: true` 引用网络）
-
-### 4.3 环境变量配置
-
-**文件:** `docker/qdrant/.env`
-
-```bash
-# Qdrant 版本
-QDRANT_VERSION=v1.12.0
-
-# 端口配置
-QDRANT_HTTP_PORT=6333
-QDRANT_GRPC_PORT=6334
-
-# 数据持久化路径
-QDRANT_STORAGE_PATH=/qdrant/storage
-QDRANT_SNAPSHOTS_PATH=/qdrant/storage/snapshots
-
-# 性能配置
-QDRANT_MAX_OPTIMIZATION_THREADS=2
-QDRANT_MAX_REQUEST_SIZE_MB=32
-
-# 内存限制
-QDRANT_MEMORY_LIMIT=4G
-
-# Web UI
-QDRANT_WEBUI_PORT=6335
-
-# 嵌入模型配置
-EMBEDDING_MODEL=local  # local | deepseek | openai
-EMBEDDING_MODEL_NAME=paraphrase-multilingual-MiniLM-L12-v2
-EMBEDDING_VECTOR_SIZE=384
-
-# Collection 配置
-COLLECTION_NAME=indepctrader_kb
-```
-
-## 五、Qdrant Collection 设计
-
-### 5.1 Collection 结构
-
-```python
-{
-    "collection_name": "indepctrader_kb",
-    "vector_size": 384,
-    "distance": "Cosine",
-    "payload_schema": {
-        "doc_name": "string",           # 文档名称
-        "doc_path": "string",           # 文档路径
-        "doc_type": "string",           # 文档类型: md/pdf/txt
-        "category": "string",           # 分类: business/project/research
-        "file_hash": "string",          # 文件 MD5 hash
-        "upload_time": "string",        # 上传时间
-        "file_size": "integer",         # 文件大小
-        "chunk_index": "integer",       # 分块索引
-        "chunk_text": "string",         # 分块文本内容
-        "source": "string"              # 来源: bigmodel/local
-    }
-}
-```
-
-### 5.2 HNSW 索引配置
-
-```python
-hnsw_config = {
-    "m": 16,                # 每个节点的最大连接数
-    "ef_construct": 100,    # 构建索引时的搜索范围
-}
-
-optimizer_config = {
-    "indexing_threshold": 20000,  # 达到 20000 个向量后开始索引
-}
-```
-
-### 5.3 文档分块策略
-
-```python
-CHUNK_CONFIG = {
-    "max_chunk_size": 500,        # 最大分块大小（字符数）
-    "chunk_overlap": 50,          # 分块重叠（字符数）
-    "chunk_by_paragraph": True,   # 按段落分块
-    "min_chunk_size": 100,        # 最小分块大小
-}
-```
-
-## 六、核心代码实现
-
-### 6.1 关键文件清单
-
-**需要新建的文件：**
-
-1. `knowledge-base/qdrant/scripts/qdrant_client.py`
-   - Qdrant 客户端封装
-   - 提供 Collection 管理、CRUD 操作
-   - 嵌入模型管理
-
-2. `knowledge-base/qdrant/scripts/qdrant_mcp.py`
-   - MCP Server 实现
-   - 提供 Claude Code 集成接口
-   - 工具: `search_knowledge`, `chat_with_knowledge`
-
-3. `knowledge-base/qdrant/scripts/qdrant_upload.py`
-   - 智能上传脚本
-   - 支持 hash 检查、增量上传
-   - 文档分块和向量化
-
-4. `knowledge-base/qdrant/scripts/embedding_models.py`
-   - 嵌入模型抽象层
-   - 支持本地模型（sentence-transformers）
-   - 支持云端 API（DeepSeek/OpenAI）
-
-5. `docker/qdrant/docker-compose.yml`
-   - Qdrant Docker 配置
-
-6. `docker/qdrant/.env`
-   - 环境变量配置
-
-7. `docker/qdrant-webui/docker-compose.yml`
-   - Web UI Docker 配置
-
-8. `devops/backup_qdrant.sh`
-   - Qdrant 备份脚本
-
-9. `devops/restore_qdrant.sh`
-   - Qdrant 恢复脚本
-
-**需要修改的文件：**
-
-1. `~/.config/claude-code/mcp_config.json` (MCP 配置)
-   - 添加 Qdrant MCP Server 配置
-   - 路径: `knowledge-base/qdrant/scripts/qdrant_mcp.py`
-
-**注意:** 无需修改 `.gitignore`，因为数据目录在项目外
-
-### 6.2 核心类设计
-
-**QdrantKnowledgeBase 类** (`qdrant_client.py`)
-
+**核心类：**
 ```python
 class QdrantKnowledgeBase:
-    """Qdrant 知识库客户端"""
+    """Qdrant 本地向量知识库管理类"""
 
-    def __init__(self, host="localhost", port=6333, collection_name="indepctrader_kb"):
-        # 初始化 Qdrant 客户端
-        # 初始化嵌入模型
-        pass
+    COLLECTION_NAME = "knowledge_base"
+    VECTOR_SIZE = 1024  # BGE-M3
+    SIMILARITY_THRESHOLD = 0.95
 
-    def create_collection(self):
-        """创建 Collection"""
-        pass
-
-    def upload_document(self, file_path: str, category: str = "project"):
-        """上传文档并索引
-
-        步骤:
-        1. 读取文件内容
-        2. 文档分块（按段落）
-        3. 生成嵌入向量
-        4. 上传到 Qdrant
-        """
-        pass
-
-    def search(self, query: str, top_k: int = 5, category: str = None):
-        """检索知识库
-
-        返回格式与 BigModel 一致
-        """
-        pass
-
-    def delete_document(self, doc_name: str):
-        """删除文档（所有分块）"""
-        pass
-
-    def get_collection_info(self):
-        """获取 Collection 信息"""
-        pass
+    def __init__(self, storage_path="/home/shang/qdrant_data", model_name="BAAI/bge-m3-base")
+    def upload_document(file_path, skip_duplicates=True)
+    def upload_directory(directory, recursive=True)
+    def search(query, top_k=5, score_threshold=0.5, filters=None)
+    def delete_document(file_path)
+    def list_documents(category=None, file_type=None)
+    def get_collection_info()
 ```
 
-**EmbeddingModel 类** (`embedding_models.py`)
+**命令行接口：**
+```bash
+# 上传单个文件
+python3 knowledge-base/scripts/qdrant_kb.py upload --file document.pdf
 
+# 批量上传目录
+python3 knowledge-base/scripts/qdrant_kb.py upload --dir knowledge-base/
+
+# 搜索知识库
+python3 knowledge-base/scripts/qdrant_kb.py search --query "Python 异步编程"
+
+# 列出文档
+python3 knowledge-base/scripts/qdrant_kb.py list --category project
+
+# 删除文档
+python3 knowledge-base/scripts/qdrant_kb.py delete --file document.pdf
+```
+
+#### 2. `knowledge-base/scripts/test_qdrant.py` ✅
+
+测试脚本，用于验证知识库功能。
+
+### 4.2 Collection 设计
+
+**Collection 结构：**
 ```python
-class EmbeddingModel:
-    """嵌入模型基类"""
-
-    def encode(self, text: str) -> List[float]:
-        """编码文本为向量"""
-        pass
-
-class LocalEmbeddingModel(EmbeddingModel):
-    """本地 sentence-transformers 模型"""
-
-    def __init__(self, model_name="paraphrase-multilingual-MiniLM-L12-v2"):
-        # 加载模型
-        pass
-
-class DeepSeekEmbeddingModel(EmbeddingModel):
-    """DeepSeek Embedding API"""
-
-    def __init__(self, api_key: str):
-        # 初始化 API 客户端
-        pass
-```
-
-### 6.3 上传记录格式扩展
-
-**Qdrant 专用格式** (`knowledge-base/qdrant/.upload_record.json`):
-
-```json
 {
-    "文档名称.md": {
-        "hash": "md5hash",
-        "document_id": "uuid-v4",
-        "upload_time": "2025-12-27T22:26:02",
-        "file_size": 19284,
-        "file_mtime": 1766825707.895223,
-
-        // Qdrant 新增字段
-        "vector_db": "qdrant",
-        "collection": "indepctrader_kb",
-        "chunks_count": 12,
-        "embedding_model": "paraphrase-multilingual-MiniLM-L12-v2",
-        "point_ids": ["uuid-1", "uuid-2", ...]
+    "collection_name": "knowledge_base",
+    "vector_size": 1024,  # BGE-M3
+    "distance": "Cosine",
+    "payload": {
+        "text": "原始文本块",
+        "metadata": {
+            "file_path": "/absolute/path/to/file.pdf",
+            "file_name": "file.pdf",
+            "file_size": 12345,
+            "file_type": "pdf",
+            "category": "project",  # business/project/research/other
+            "md5": "abc123...",
+            "upload_time": "2025-12-28T10:30:00",
+            "last_modified": "2025-12-28T10:30:00",
+            "chunk_index": 0,
+            "total_chunks": 10,
+            "chunk_text": "摘要（前500字符）..."
+        }
     }
 }
 ```
 
-## 七、部署步骤
+**文档分块策略：**
+- `max_chunk_size`: 500 字符（可配置）
+- 按段落分块（保留语义完整性）
+- 支持多种文档格式：`.md`, `.txt`, `.pdf`, `.docx`, `.xlsx`, `.csv`
 
-### Phase 1: 准备环境 (1-2 小时)
+### 4.3 去重机制
 
-**1.1 创建目录结构**
-```bash
-# 项目内目录
-mkdir -p knowledge-base/qdrant/scripts
-mkdir -p devops
-mkdir -p docker/qdrant
-mkdir -p docker/qdrant-webui
+**三级去重策略：**
 
-# 项目外数据目录
-mkdir -p /home/shang/data/qdrant/storage
-mkdir -p /home/shang/data/qdrant/snapshots
-mkdir -p /home/shang/data/qdrant/backups
-```
+1. **文件路径去重**（默认启用）
+   - 基于文件绝对路径
+   - 适合检测重新上传的相同文件
 
-**1.2 安装 Python 依赖**
+2. **MD5 内容去重**（默认启用）
+   - 基于文件 MD5 hash
+   - 适合检测内容相同但文件名不同的文件
+
+3. **向量相似度去重**（可选，SIMILARITY_THRESHOLD = 0.95）
+   - 基于向量余弦相似度
+   - 适合检测高度相似的文档内容
+
+## 五、部署步骤
+
+### Phase 1: 环境准备 ✅ (已完成)
+
+**1.1 安装 Python 依赖**
 ```bash
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple \
     qdrant-client \
     sentence-transformers \
-    pypdf \
-    python-docx \
-    openpyxl
+    unstructured[all-in-one]
 ```
 
-**1.3 创建 Docker 配置文件**
-- 创建 `docker/qdrant/docker-compose.yml`
-- 创建 `docker/qdrant/.env`
-- 创建 `docker/qdrant-webui/docker-compose.yml`
-
-### Phase 2: 部署 Qdrant (30 分钟)
-
-**2.1 启动 Qdrant**
+**1.2 验证安装**
 ```bash
-cd docker/qdrant
-docker-compose up -d
+# 检查 qdrant-client
+python3 -c "import qdrant_client; print(qdrant_client.__version__)"
+
+# 检查 sentence-transformers
+python3 -c "import sentence_transformers; print(sentence_transformers.__version__)"
 ```
 
-**2.2 验证服务**
+### Phase 2: 初始化知识库 ✅ (已完成)
+
+**2.1 创建测试脚本**
 ```bash
-# 检查容器状态
-docker ps | grep qdrant
-
-# 检查健康状态
-curl http://localhost:6333/health
-
-# 查看版本信息
-curl http://localhost:6333/
+cd /home/shang/git/Indeptrader
+python3 knowledge-base/scripts/qdrant_kb.py upload --dir knowledge-base/
 ```
 
-**2.3 启动 Web UI**
+**2.2 验证知识库**
 ```bash
-cd docker/qdrant-webui
-docker-compose up -d
+# 查看已上传文档
+python3 knowledge-base/scripts/qdrant_kb.py list
+
+# 测试搜索
+python3 knowledge-base/scripts/qdrant_kb.py search --query "测试查询"
 ```
 
-**2.4 访问 Web UI**
-- 浏览器打开: `http://localhost:6335`
-- 确认可以连接到 Qdrant
+### Phase 3: MCP 集成 (待实施)
 
-### Phase 3: 开发核心代码 (2-3 天)
+**3.1 创建 MCP Server**
+文件：`knowledge-base/scripts/qdrant_mcp.py`
 
-**3.1 实现 `embedding_models.py`**
-- 本地模型类
-- API 模型类（可选）
-- 测试编码功能
+```python
+#!/usr/bin/env python3
+"""
+Qdrant MCP Server for Claude Code
 
-**3.2 实现 `qdrant_client.py`**
-- Qdrant 客户端封装
-- Collection 管理
-- CRUD 操作
-- 测试基本功能
+提供工具:
+- search_knowledge: 搜索知识库
+- chat_with_knowledge: 基于知识库的对话
+"""
 
-**3.3 实现 `qdrant_upload.py`**
-- 智能上传逻辑
-- hash 检查
-- 文档分块
-- 向量化
-- 测试上传单个文档
+from mcp.server import Server
+from qdrant_kb import QdrantKnowledgeBase
 
-**3.4 实现 `qdrant_mcp.py`**
-- MCP Server
-- 实现知识库检索接口
-- 测试工具调用
+app = Server("qdrant-knowledge-base")
 
-### Phase 4: 数据迁移 (1 天)
+# 初始化知识库（数据存储在用户主目录）
+kb = QdrantKnowledgeBase(storage_path="/home/shang/qdrant_data")
 
-**4.1 创建 Collection**
-```bash
-python3 -c "
-from knowledge_base.qdrant.scripts.qdrant_client import QdrantKnowledgeBase
-kb = QdrantKnowledgeBase()
-kb.create_collection()
-print('✅ Collection 创建成功')
-"
+@app.tool()
+def search_knowledge(query: str, top_k: int = 5) -> str:
+    """搜索知识库
+
+    Args:
+        query: 查询文本
+        top_k: 返回前 K 个结果
+
+    Returns:
+        搜索结果（JSON 格式）
+    """
+    results = kb.search(query, top_k=top_k)
+    return json.dumps(results, ensure_ascii=False, indent=2)
+
+@app.tool()
+def chat_with_knowledge(question: str) -> str:
+    """基于知识库回答问题
+
+    Args:
+        question: 用户问题
+
+    Returns:
+        基于检索内容的回答
+    """
+    # 搜索相关文档
+    results = kb.search(question, top_k=3)
+
+    # 构建上下文
+    context = "\n\n".join([r["text"] for r in results])
+
+    # TODO: 调用 LLM 生成回答
+    # 这里可以集成 DeepSeek 或其他 LLM API
+
+    return f"找到 {len(results)} 个相关文档:\n\n{context}"
+
+if __name__ == "__main__":
+    app.run()
 ```
 
-**4.2 运行智能上传**
-```bash
-python3 knowledge-base/qdrant/scripts/qdrant_upload.py \
-    --dir knowledge-base \
-    --delete-old
-```
+**3.2 更新 MCP 配置**
 
-**4.3 验证上传结果**
-- 在 Web UI 中查看 Collection 统计
-- 确认向量数量
-- 运行测试查询
+文件：`~/.config/claude-code/mcp_config.json`
 
-### Phase 5: 更新 MCP 配置 (5 分钟)
-
-**5.1 备份现有配置**
-```bash
-cp ~/.config/claude-code/mcp_config.json \
-   ~/.config/claude-code/mcp_config.json.backup
-```
-
-**5.2 更新配置**
 ```json
 {
   "mcpServers": {
     "qdrant-kb": {
       "command": "python3",
       "args": [
-        "knowledge-base/qdrant/scripts/qdrant_mcp.py"
-      ]
+        "/home/shang/git/Indeptrader/knowledge-base/scripts/qdrant_mcp.py"
+      ],
+      "cwd": "/home/shang/git/Indeptrader"
     }
   }
 }
 ```
 
-**5.3 重启 Claude Code**
+**3.3 重启 Claude Code**
 - 关闭 Claude Code
-- 重新打开
+- 重新打开以加载 MCP 配置
 
-### Phase 6: 测试验证 (1-2 周)
+### Phase 4: 测试验证 (待实施)
 
-**6.1 功能测试**
-- 测试 `search_knowledge` 工具
-- 测试 `chat_with_knowledge` 工具
-- 验证检索结果的准确性和完整性
+**4.1 功能测试**
+```bash
+# 测试基本搜索
+python3 knowledge-base/scripts/qdrant_kb.py search --query "Python 装饰器"
 
-**6.2 性能测试**
-- 测试响应时间
-- 测试并发查询
-- 监控资源使用
+# 测试元数据过滤
+python3 knowledge-base/scripts/qdrant_kb.py search --query "API" --category project
+```
 
-**6.3 优化调整**
-- 根据测试结果调优参数
-- 优化分块策略
-- 改进检索质量
+**4.2 MCP 集成测试**
+在 Claude Code 中测试：
+```
+请使用 search_knowledge 工具搜索 "向量数据库"
+```
 
-## 八、备份和恢复策略
+**4.3 性能测试**
+```python
+import time
+from qdrant_kb import QdrantKnowledgeBase
 
-### 8.1 自动备份
+kb = QdrantKnowledgeBase()
 
-**备份脚本:** `devops/backup_qdrant.sh`
+# 测试搜索性能
+start = time.time()
+results = kb.search("测试查询", top_k=5)
+latency = time.time() - start
+
+print(f"搜索延迟: {latency*1000:.2f}ms")
+```
+
+## 六、备份和恢复策略
+
+### 6.1 数据备份
+
+**方案 1：文件级备份（推荐）**
+
+由于 Qdrant 数据存储在本地文件系统，备份非常简单：
 
 ```bash
 #!/bin/bash
-# 文件路径: /home/shang/git/Indeptrader/devops/backup_qdrant.sh
+# 文件: devops/backup_qdrant_kb.sh
 
-BACKUP_DIR="/home/shang/data/qdrant/backups"
+BACKUP_ROOT="/home/shang/backups/qdrant_kb"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+SOURCE_DIR="/home/shang/qdrant_data"  # 用户主目录
 
-# 创建快照
-curl -X POST "http://localhost:6333/collections/indepctrader_kb/snapshots"
+# 创建备份目录
+mkdir -p ${BACKUP_ROOT}
 
-# 复制到备份目录
-docker cp indepctrader-qdrant:/qdrant/storage/snapshots/${SNAPSHOT_NAME} \
-    ${BACKUP_DIR}/${SNAPSHOT_NAME}
+# 创建压缩备份
+tar -czf ${BACKUP_ROOT}/qdrant_kb_${TIMESTAMP}.tar.gz -C ${SOURCE_DIR} .
 
-# 压缩
-gzip ${BACKUP_DIR}/${SNAPSHOT_NAME}
+# 清理 30 天前的备份
+find ${BACKUP_ROOT} -name "qdrant_kb_*.tar.gz" -mtime +30 -delete
 
-# 清理旧备份（保留 7 天）
-find ${BACKUP_DIR} -name "qdrant_snapshot_*.gz" -mtime +7 -delete
+echo "✅ 备份完成: qdrant_kb_${TIMESTAMP}.tar.gz"
 ```
 
-**定时任务:**
+**设置定时任务：**
 ```bash
 # 每天凌晨 2 点备份
 crontab -e
-0 2 * * * /home/shang/git/Indeptrader/devops/backup_qdrant.sh
+0 2 * * * /home/shang/git/Indeptrader/devops/backup_qdrant_kb.sh
 ```
 
-### 8.2 灾难恢复
+**方案 2：云同步备份**
+```bash
+# 使用 rsync 同步到云存储
+rsync -avz /home/shang/qdrant_data/ \
+    user@backup-server:/backups/qdrant_kb/
+```
 
-**恢复脚本:** `devops/restore_qdrant.sh`
+### 6.2 数据恢复
 
 ```bash
 #!/bin/bash
-# 文件路径: /home/shang/git/Indeptrader/devops/restore_qdrant.sh
+# 文件: devops/restore_qdrant_kb.sh
 
-SNAPSHOT_FILE=$1
+BACKUP_FILE=$1  # 备份文件路径
 
-# 停止 Qdrant
-cd docker/qdrant
-docker-compose down
+if [ -z "$BACKUP_FILE" ]; then
+    echo "❌ 请指定备份文件"
+    echo "用法: ./restore_qdrant_kb.sh <backup_file.tar.gz>"
+    exit 1
+fi
 
 # 备份当前数据
-mv /home/shang/data/qdrant/storage \
-   /home/shang/data/qdrant/storage_backup_$(date +%Y%m%d)
+TARGET_DIR="/home/shang/qdrant_data"  # 用户主目录
+if [ -d "$TARGET_DIR" ]; then
+    mv ${TARGET_DIR} ${TARGET_DIR}_backup_$(date +%Y%m%d_%H%M%S)
+fi
 
-# 创建新存储目录
-mkdir -p /home/shang/data/qdrant/storage
+# 恢复数据
+mkdir -p ${TARGET_DIR}
+tar -xzf ${BACKUP_FILE} -C ${TARGET_DIR}
 
-# 解压快照
-gunzip -c /home/shang/data/qdrant/backups/${SNAPSHOT_FILE} > \
-    /home/shang/data/qdrant/storage/snapshot
+echo "✅ 恢复完成"
+```
 
-# 启动 Qdrant
+**使用方法：**
+```bash
+./devops/restore_qdrant_kb.sh /home/shang/backups/qdrant_kb/qdrant_kb_20251228_020000.tar.gz
+```
+
+### 6.3 版本控制建议
+
+**建议将以下内容加入 Git：**
+- ✅ `knowledge-base/scripts/qdrant_kb.py`
+- ✅ `knowledge-base/scripts/test_qdrant.py`
+- ✅ `knowledge-base/scripts/qdrant_mcp.py`（待创建）
+- ✅ 备份和恢复脚本
+
+**建议排除 Git：**
+- ❌ `qdrant_data/`（数据文件）
+
+**更新 `.gitignore`：**
+```bash
+# Qdrant 本地数据（项目根目录）
+qdrant_data/
+```
+
+## 七、使用指南
+
+### 7.1 日常使用
+
+**上传新文档：**
+```bash
+# 单个文件
+python3 knowledge-base/scripts/qdrant_kb.py upload --file new_doc.pdf
+
+# 整个目录（增量上传）
+python3 knowledge-base/scripts/qdrant_kb.py upload --dir knowledge-base/
+```
+
+**搜索知识：**
+```bash
+# 基本搜索
+python3 knowledge-base/scripts/qdrant_kb.py search --query "Python 异步编程"
+
+# 返回更多结果
+python3 knowledge-base/scripts/qdrant_kb.py search --query "Docker" --top-k 10
+```
+
+**管理文档：**
+```bash
+# 列出所有文档
+python3 knowledge-base/scripts/qdrant_kb.py list
+
+# 按类别筛选
+python3 knowledge-base/scripts/qdrant_kb.py list --category project
+
+# 删除文档
+python3 knowledge-base/scripts/qdrant_kb.py delete --file outdated.pdf
+```
+
+### 7.2 Python API 使用
+
+```python
+from knowledge_base.scripts.qdrant_kb import QdrantKnowledgeBase
+
+# 初始化知识库（数据存储在用户主目录）
+kb = QdrantKnowledgeBase(
+    storage_path="/home/shang/qdrant_data",
+    model_name="BAAI/bge-m3-base"
+)
+
+# 上传文档
+result = kb.upload_document("document.pdf")
+print(f"上传了 {result['chunks']} 个文本块")
+
+# 搜索
+results = kb.search("如何使用 Python 装饰器？", top_k=5)
+for i, r in enumerate(results, 1):
+    print(f"[{i}] 相关度: {r['score']:.4f}")
+    print(f"    文件: {r['metadata']['file_name']}")
+    print(f"    内容: {r['text'][:200]}...")
+
+# 按类别搜索
+results = kb.search(
+    "API 设计",
+    filters={"category": "project"}
+)
+
+# 删除文档
+kb.delete_document("old_document.pdf")
+```
+
+### 7.3 Claude Code 集成使用
+
+在 Claude Code 中，通过 MCP 工具访问知识库：
+
+```
+我: 请搜索知识库中关于 "向量数据库" 的内容
+
+Claude: [调用 search_knowledge 工具]
+找到 5 个相关文档：
+1. [score: 0.89] Qdrant 部署方案.md
+   内容：...
+```
+
+## 八、性能优化
+
+### 8.1 优化建议
+
+**1. 调整分块大小**
+```python
+# 针对长文档，增大分块大小
+kb.upload_document(file_path, chunk_size=800)
+
+# 针对短文档，减小分块大小
+kb.upload_document(file_path, chunk_size=300)
+```
+
+**2. 调整相似度阈值**
+```python
+# 提高精度（减少结果）
+results = kb.search(query, score_threshold=0.7)
+
+# 提高召回率（增加结果）
+results = kb.search(query, score_threshold=0.3)
+```
+
+**3. 批量上传优化**
+```python
+# 对于大量文档，使用批量上传
+results = kb.upload_directory(
+    "knowledge-base/",
+    skip_duplicates=True  # 跳过已上传文档
+)
+```
+
+### 8.2 性能基准
+
+**预期性能指标（BGE-M3，CPU 模式）：**
+- 向量维度: 1024
+- 单文档处理时间: 1-5 秒（取决于文档大小）
+- 检索响应时间: 50-200ms
+- 内存占用: 1-2GB（Python 进程）
+- 磁盘占用: 初始约 500MB（模型 + 数据），每 1000 文档约增加 100MB
+
+**影响因素：**
+- 文档大小和数量
+- 分块策略
+- 硬件性能（CPU/内存）
+- 向量维度
+
+## 九、故障排除
+
+### 9.1 常见问题
+
+**Q1: 模型下载失败**
+```bash
+# 手动下载模型
+export HF_ENDPOINT=https://hf-mirror.com
+python3 -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-m3-base')"
+```
+
+**Q2: 存储路径权限错误**
+```bash
+# 检查权限
+ls -la qdrant_data/
+
+# 修复权限
+chmod -R 755 qdrant_data/
+```
+
+**Q3: 内存不足**
+```python
+# 使用更小的模型
+kb = QdrantKnowledgeBase(model_name="paraphrase-multilingual-MiniLM-L12-v2")  # 384 维
+
+# 或使用 CPU 模式
+kb = QdrantKnowledgeBase(device="cpu")
+```
+
+**Q4: 搜索结果不相关**
+```python
+# 调整相似度阈值
+results = kb.search(query, score_threshold=0.6)
+
+# 使用不同的嵌入模型
+kb = QdrantKnowledgeBase(model_name="BAAI/bge-large-zh-v1.5")
+```
+
+### 9.2 调试模式
+
+```python
+# 启用详细日志
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+kb = QdrantKnowledgeBase()
+kb.search("测试查询")
+```
+
+## 十、未来扩展方向
+
+### 10.1 短期优化（1-2 周）
+
+- [ ] 实现 MCP Server 集成
+- [ ] 添加增量更新功能
+- [ ] 优化分块策略
+- [ ] 添加更多文档类型支持
+- [ ] 实现文档版本管理
+
+### 10.2 中期优化（1-2 月）
+
+- [ ] 集成 LLM 问答功能（RAG）
+- [ ] 支持多种嵌入模型切换
+- [ ] 添加文档标签系统
+- [ ] 实现相似文档推荐
+- [ ] Web UI 管理界面
+
+### 10.3 长期优化（3-6 月）
+
+- [ ] GPU 加速（如果需要）
+- [ ] 迁移到 Docker（如果数据量增长）
+- [ ] 多模态支持（图片、表格）
+- [ ] 分布式部署（如果需要）
+
+### 10.4 迁移到 Docker 方案
+
+如果未来需要迁移到 Docker 服务器模式，步骤如下：
+
+**1. 导出数据**
+```python
+from qdrant_client import QdrantClient
+
+# 连接到嵌入式实例
+local_client = QdrantClient(path="/home/shang/qdrant_data")
+
+# 创建快照（如果支持）或导出 Collection
+# TODO: Qdrant Client 嵌入式模式可能不支持快照
+# 替代方案：通过 API 重新上传所有文档
+```
+
+**2. 部署 Docker Qdrant**
+```bash
+# 按照 Docker 方案部署
+cd docker/qdrant
 docker-compose up -d
 ```
 
-## 九、关键文件路径总结
+**3. 重新上传数据**
+```python
+# 连接到 Docker 实例
+docker_client = QdrantClient(host="localhost", port=6333)
 
-### 必须创建的文件（按优先级）
+# 重新上传所有文档
+kb = QdrantKnowledgeBase(client=docker_client)
+kb.upload_directory("knowledge-base/", skip_duplicates=True)
+```
 
-1. `docker/qdrant/docker-compose.yml`
-2. `docker/qdrant/.env`
-3. `docker/qdrant-webui/docker-compose.yml`
-4. `knowledge-base/qdrant/scripts/embedding_models.py`
-5. `knowledge-base/qdrant/scripts/qdrant_client.py`
-6. `knowledge-base/qdrant/scripts/qdrant_upload.py`
-7. `knowledge-base/qdrant/scripts/qdrant_mcp.py`
-8. `devops/backup_qdrant.sh`
-9. `devops/restore_qdrant.sh`
+**注意：** API 兼容，代码无需修改，只需初始化参数不同。
 
-### 必须修改的文件
+## 十一、总结
 
-1. `~/.config/claude-code/mcp_config.json` - 更新 MCP Server 路径
+### 核心优势
 
-**注意:** 无需修改 `.gitignore`，因为数据目录在项目外
+**✅ 轻量级架构**
+- 无需 Docker 或独立服务器
+- 部署简单，一条命令即可
+- 适合个人和小团队
 
-## 十、预期效果
+**✅ 完全本地化**
+- 数据隐私和安全
+- 无网络依赖
+- 零 API 成本
 
-**优势:**
-- ✅ 完全本地化，无需网络
-- ✅ 数据隐私和安全
-- ✅ 无 API 调用成本
-- ✅ 响应速度快（本地推理）
-- ✅ 可完全控制和定制
+**✅ 功能完整**
+- 智能去重（MD5 + 路径 + 向量相似度）
+- 多格式文档支持
+- 元数据过滤
+- 语义搜索
 
-**性能指标:**
-- 向量维度: 384
-- 单文档处理时间: 1-3 秒（取决于文档大小）
-- 检索响应时间: < 100ms
-- 内存占用: 2-4GB（Docker 容器）
-- 磁盘占用: 初始约 500MB（模型 + 数据）
+**✅ 易于维护**
+- 文件级备份
+- 简单的恢复流程
+- 代码易读易扩展
 
-## 十一、风险评估
+### 技术栈
 
-**主要风险:**
+- **向量数据库**: Qdrant Client (嵌入式模式)
+- **嵌入模型**: BGE-M3 (BAAI/bge-m3-base)
+- **文档解析**: unstructured
+- **Python 版本**: 3.8+
 
-1. **向量质量风险**
-   - 风险: 本地模型可能不如云端模型
-   - 缓解: 选择高质量的嵌入模型，通过测试验证效果
+### 适用场景
 
-2. **性能风险**
-   - 风险: WSL2 环境性能可能受限
-   - 缓解: 优化资源配置，必要时使用云端嵌入 API
+✅ **推荐使用：**
+- 个人知识库
+- 小团队文档管理（< 10K 文档）
+- 单机使用
+- 快速原型开发
 
-3. **数据丢失风险**
-   - 风险: Docker 容器删除
-   - 缓解: 定期备份快照，使用数据卷持久化
+❌ **不推荐使用：**
+- 大规模生产环境（> 50K 文档）
+- 多用户并发访问
+- 需要高可用性和容错
 
-4. **兼容性风险**
-   - 风险: MCP 接口变化
-   - 缓解: 保持接口兼容性，充分测试
+### 成功标准
 
-## 十二、后续优化方向
+- ✅ 所有文档成功上传
+- ✅ 搜索结果准确且相关
+- ✅ 响应时间 < 500ms
+- ✅ MCP 集成正常工作
+- ✅ 备份和恢复机制完善
 
-**短期优化（1-2 周）:**
-- 调优分块策略
-- 优化搜索参数
-- 添加更多文档类型支持
+---
 
-**中期优化（1-2 月）:**
-- 实现增量更新
-- 添加文档版本管理
-- 集成其他嵌入模型
-
-**长期优化（3-6 月）:**
-- GPU 加速（如果需要）
-- 分布式部署
-- 多模态支持（图片、表格）
-
-## 十三、总结
-
-本方案提供了完整的本地 Qdrant 部署架构，从 Docker 配置到代码实现，再到数据迁移和备份恢复，覆盖了所有关键环节。
-
-**核心优势:**
-- 完全本地化，数据自主可控
-- 无 API 成本，长期使用更经济
-- 响应速度快，用户体验好
-
-**实施建议:**
-- 分阶段实施，逐步验证
-- 充分测试，确保稳定
-- 定期备份，保障数据安全
-
-**预期时间表:**
-- Phase 1-2: 环境准备 (1-2 小时)
-- Phase 3: 代码开发 (2-3 天)
-- Phase 4: 数据迁移 (1 天)
-- Phase 5-6: 测试验证 (1-2 周)
-
-**成功标准:**
-- Qdrant 服务稳定运行
-- 所有文档成功迁移
-- 检索效果满足需求
-- Claude Code MCP 集成正常
+**文档版本:** v2.0 (嵌入式模式)
+**最后更新:** 2025-12-28
+**维护者:** Indeptrader Project
