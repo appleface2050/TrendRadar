@@ -2,6 +2,8 @@
 
 cd ~/git/deep-research && nohup pnpm dev > /tmp/deep-research.log 2>&1 &
 
+http://localhost:3000/
+
 2. 启动Qdrant FastAPI
 
 启动
