@@ -7,6 +7,7 @@ Qdrant 知识库 FastAPI 服务
 
 import os
 import sys
+import shutil
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 import uvicorn
@@ -330,6 +331,25 @@ async def search_post(request: SearchRequest):
     return results
 
 
+def get_knowledge_base_storage_size(path: str) -> Dict[str, Any]:
+    """计算知识库（Qdrant 数据目录）占用空间"""
+    total_size = 0
+    try:
+        for dirpath, dirnames, filenames in os.walk(path):
+            for filename in filenames:
+                filepath = os.path.join(dirpath, filename)
+                if os.path.exists(filepath) and not os.path.islink(filepath):
+                    total_size += os.path.getsize(filepath)
+    except Exception as e:
+        print(f"⚠️  计算存储空间时出错: {e}")
+
+    return {
+        "total_bytes": total_size,
+        "total_mb": round(total_size / (1024 * 1024), 2),
+        "total_gb": round(total_size / (1024 * 1024 * 1024), 2),
+    }
+
+
 @app.get("/stats", summary="获取统计信息")
 async def get_stats():
     """获取知识库统计信息"""
@@ -337,11 +357,13 @@ async def get_stats():
         raise HTTPException(status_code=503, detail="服务未初始化")
 
     info = kb_instance.get_collection_info()
+    storage_size = get_knowledge_base_storage_size(kb_instance.storage_path)
 
     return {
         "model_name": kb_instance.model_name,
         "device": kb_instance.device,
         "storage_path": kb_instance.storage_path,
+        "storage_size": storage_size,
         "collection_name": kb_instance.COLLECTION_NAME,
         "vector_size": kb_instance.VECTOR_SIZE,
         **info

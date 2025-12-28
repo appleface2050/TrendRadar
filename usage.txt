@@ -4,7 +4,10 @@ cd ~/git/deep-research && nohup pnpm dev > /tmp/deep-research.log 2>&1 &
 
 2. 启动Qdrant FastAPI
 
+启动
 sh /home/shang/git/Indeptrader/knowledge-base/scripts/start_kb_server.sh
+重启
+sh /home/shang/git/Indeptrader/knowledge-base/scripts/restart_kb_server.sh
 
 # Qdrant双向同步
 python3 /home/shang/git/Indeptrader/knowledge-base/scripts/sync_knowledge_base.py \
