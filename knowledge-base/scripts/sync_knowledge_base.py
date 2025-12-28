@@ -192,6 +192,8 @@ class KnowledgeBaseSync:
             category = 'research'
         elif 'business' in path_parts:
             category = 'business'
+        elif 'references' in path_parts:
+            category = 'references'
         else:
             category = 'other'
 
