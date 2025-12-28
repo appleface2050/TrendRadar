@@ -6,10 +6,10 @@ cd ~/git/deep-research && nohup pnpm dev > /tmp/deep-research.log 2>&1 &
 
 sh /home/shang/git/Indeptrader/knowledge-base/scripts/start_kb_server.sh
 
+# Qdrant双向同步
+python3 /home/shang/git/Indeptrader/knowledge-base/scripts/sync_knowledge_base.py \
+  --dir /home/shang/git/Indeptrader/knowledge-base
 
-3. Qdrant 知识库已自动集成，无需手动上传
-python3 /home/shang/git/Indeptrader/knowledge-base/scripts/qdrant_kb.py upload \
-  --dir "/home/shang/git/Indeptrader/knowledge-base"
 
 # 搜索知识库
 python /home/shang/git/Indeptrader/knowledge-base/scripts/kb_client.py search --query "你的问题"
