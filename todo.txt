@@ -1,8 +1,7 @@
-1. https://mcpmarket.com/zh/server/skill-seeker
-
-2. Running需要彻底重写。
 
 7. 测试claude skills
 
-8. 当前模型已经从BAAI/bge-small-zh-v1.5 改为 BAAI/bge-m3，检查代码，确保没有用BAAI/bge-small-zh-v1.5
+http://localhost:8000/stats 接口，增加显示占用存储空间
+
+
 
