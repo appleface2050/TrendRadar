@@ -681,3 +681,4 @@ function handleRegionChange(region) {
     updateAllCharts();
     updateDataTable();
 }
+// Test hook - Sun Dec 28 12:33:48 CST 2025
