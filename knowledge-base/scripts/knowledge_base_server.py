@@ -15,6 +15,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, Filter, FieldCondition, MatchValue
+import torch
 
 # 自动从 settings.py 加载 HF_ENDPOINT
 try:
@@ -93,13 +94,13 @@ class KnowledgeBaseService:
     """知识库服务类"""
 
     COLLECTION_NAME = "knowledge_base"
-    VECTOR_SIZE = 512
+    VECTOR_SIZE = 1024
     SIMILARITY_THRESHOLD = 0.95
 
     def __init__(
         self,
         storage_path: str = "/home/shang/qdrant_data",
-        model_name: str = "BAAI/bge-small-zh-v1.5",
+        model_name: str = "BAAI/bge-m3",
         device: str = "cuda"
     ):
         self.storage_path = storage_path
@@ -113,6 +114,7 @@ class KnowledgeBaseService:
         self.model = SentenceTransformer(
             model_name,
             device=device,
+            model_kwargs={'torch_dtype': torch.float16},  # 启用 FP16 加速
             local_files_only=True  # 强制使用本地缓存，不访问网络
         )
 
@@ -213,7 +215,7 @@ async def startup_event():
     # 初始化知识库
     kb_instance = KnowledgeBaseService(
         storage_path="/home/shang/qdrant_data",
-        model_name="BAAI/bge-small-zh-v1.5",
+        model_name="BAAI/bge-m3",
         device="cuda"
     )
 

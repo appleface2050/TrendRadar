@@ -32,6 +32,7 @@ import sys
 import time
 from pathlib import Path
 from typing import Set, Dict, List, Tuple, Optional, Any
+from contextlib import contextmanager
 
 # 添加脚本目录到 Python 路径
 script_dir = Path(__file__).parent
@@ -63,6 +64,64 @@ except Exception:
     pass
 
 
+class Timer:
+    """简单的计时器类"""
+
+    def __init__(self):
+        self.start_time = None
+        self.end_time = None
+
+    def start(self):
+        """开始计时"""
+        self.start_time = time.time()
+        return self
+
+    def stop(self):
+        """停止计时"""
+        self.end_time = time.time()
+        return self
+
+    def elapsed(self) -> float:
+        """获取经过的时间（秒）"""
+        if self.start_time is None:
+            return 0.0
+        end = self.end_time if self.end_time else time.time()
+        return end - self.start_time
+
+    def format_elapsed(self) -> str:
+        """格式化时间显示"""
+        elapsed = self.elapsed()
+        if elapsed < 60:
+            return f"{elapsed:.2f}秒"
+        elif elapsed < 3600:
+            minutes = int(elapsed // 60)
+            seconds = elapsed % 60
+            return f"{minutes}分{seconds:.1f}秒"
+        else:
+            hours = int(elapsed // 3600)
+            minutes = int((elapsed % 3600) // 60)
+            seconds = elapsed % 60
+            return f"{hours}小时{minutes}分{seconds:.0f}秒"
+
+
+@contextmanager
+def timer_context(name: str, verbose: bool = True):
+    """计时上下文管理器
+
+    Args:
+        name: 操作名称
+        verbose: 是否输出日志
+    """
+    t = Timer()
+    t.start()
+    try:
+        yield t
+    finally:
+        t.stop()
+        if verbose:
+            print(f"   ⏱️  {name}耗时: {t.format_elapsed()}")
+
+
 class KnowledgeBaseSync:
     """知识库双向同步类"""
 
@@ -73,7 +132,7 @@ class KnowledgeBaseSync:
     }
 
     # 向量维度
-    VECTOR_SIZE = 512
+    VECTOR_SIZE = 1024  # BGE-M3 模型使用 1024 维
 
     # 集合名称
     COLLECTION_NAME = "knowledge_base"
@@ -526,6 +585,9 @@ class KnowledgeBaseSync:
         Returns:
             同步结果统计
         """
+        # 启动总计时器
+        total_timer = Timer().start()
+
         print("=" * 70)
         print("🔄 Qdrant 知识库双向同步")
         print("=" * 70)
@@ -535,6 +597,20 @@ class KnowledgeBaseSync:
         print(f"👀 预览模式: {'是' if dry_run else '否'}")
         print("=" * 70)
         print()
+
+        # 0. 确保集合存在
+        if not dry_run:
+            collections = self.client.get_collections()
+            if not any(c.name == self.COLLECTION_NAME for c in collections.collections):
+                print(f"📦 创建新集合: {self.COLLECTION_NAME}")
+                self.client.create_collection(
+                    collection_name=self.COLLECTION_NAME,
+                    vectors_config=VectorParams(
+                        size=self.VECTOR_SIZE,
+                        distance=Distance.COSINE
+                    )
+                )
+                print(f"   ✅ 集合创建成功（向量维度: {self.VECTOR_SIZE}）\n")
 
         # 1. 扫描文件
         qdrant_files = self._get_qdrant_files()
@@ -569,16 +645,17 @@ class KnowledgeBaseSync:
             sync_results["add"] = self.add_new_files(files_to_add, dry_run, chunk_size)
 
         # 4. 打印总结
-        self._print_summary(sync_results, dry_run)
+        self._print_summary(sync_results, dry_run, total_timer)
 
         return sync_results
 
-    def _print_summary(self, results: Dict[str, any], dry_run: bool):
+    def _print_summary(self, results: Dict[str, any], dry_run: bool, total_timer: Timer = None):
         """打印同步总结
 
         Args:
             results: 同步结果
             dry_run: 是否为预览模式
+            total_timer: 总计时器
         """
         print("\n" + "=" * 70)
         print("📊 同步完成")
@@ -616,6 +693,11 @@ class KnowledgeBaseSync:
                 print(f"   ❌ 失败: {failed} 个")
             else:
                 print(f"   ⏭️  跳过: {total} 个 (预览模式)")
+
+        # 打印总计时时间
+        if total_timer:
+            total_timer.stop()
+            print(f"\n⏱️  总耗时: {total_timer.format_elapsed()}")
 
         print("\n" + "=" * 70 + "\n")
 
@@ -867,8 +949,8 @@ def main():
 
     parser.add_argument(
         '--model-name',
-        default='BAAI/bge-small-zh-v1.5',
-        help='嵌入模型名称（默认: BAAI/bge-small-zh-v1.5）'
+        default='BAAI/bge-m3',
+        help='嵌入模型名称（默认: BAAI/bge-m3）'
     )
 
     parser.add_argument(
@@ -921,6 +1003,9 @@ def main():
 
     args = parser.parse_args()
 
+    # 启动总运行时间计时器
+    script_timer = Timer().start()
+
     # 检查目录是否存在
     if not Path(args.dir).exists():
         print(f"❌ 错误: 目录不存在: {args.dir}")
@@ -949,11 +1034,35 @@ def main():
     print("📦 加载嵌入模型...")
     print(f"   模型: {args.model_name}")
     print(f"   设备: {args.device}")
-    model = SentenceTransformer(
-        args.model_name,
-        device=args.device,
-        local_files_only=True  # 强制使用本地缓存，不访问网络
-    )
+
+    # 模型加载计时
+    model_load_timer = Timer().start()
+
+    # 优先使用本地缓存路径，避免网络请求和超时
+    cache_dir = Path.home() / '.cache' / 'huggingface' / 'hub'
+    model_cache = cache_dir / f"models--{'--'.join(args.model_name.split('/'))}"
+
+    model_path = None
+    if model_cache.exists():
+        snapshots = list((model_cache / 'snapshots').glob('*'))
+        if snapshots:
+            # 使用最新的快照
+            model_path = max(snapshots, key=lambda p: p.stat().st_mtime)
+            print(f"   📁 使用本地缓存: {model_path}")
+
+    if model_path and model_path.exists():
+        # 直接加载本地路径
+        model = SentenceTransformer(str(model_path), device=args.device)
+    else:
+        # 回退到标准加载方式
+        model = SentenceTransformer(
+            args.model_name,
+            device=args.device,
+            local_files_only=True
+        )
+
+    model_load_timer.stop()
+    print(f"   ⏱️  模型加载耗时: {model_load_timer.format_elapsed()}")
     print("✅ 模型加载完成\n")
 
     try:
@@ -980,6 +1089,12 @@ def main():
             print("💡 请手动启动知识库服务:")
             print(f"   bash {Path(args.start_script) if args.start_script else Path(__file__).parent / 'start_kb_server.sh'}")
         print("=" * 70 + "\n")
+
+    # 停止总计时器并输出
+    script_timer.stop()
+    print("=" * 70)
+    print(f"🎉 脚本执行完成！总运行时间: {script_timer.format_elapsed()}")
+    print("=" * 70 + "\n")
 
 
 if __name__ == '__main__':

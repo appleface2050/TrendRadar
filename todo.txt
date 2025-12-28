@@ -4,5 +4,5 @@
 
 7. 测试claude skills
 
-
+8. 当前模型已经从BAAI/bge-small-zh-v1.5 改为 BAAI/bge-m3，检查代码，确保没有用BAAI/bge-small-zh-v1.5
 

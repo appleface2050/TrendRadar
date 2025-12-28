@@ -46,6 +46,7 @@ from qdrant_client.models import (
     Filter, FieldCondition, MatchValue, Range
 )
 from sentence_transformers import SentenceTransformer
+import torch
 from unstructured.partition.auto import partition
 
 
@@ -55,8 +56,8 @@ class QdrantKnowledgeBase:
     # 集合名称
     COLLECTION_NAME = "knowledge_base"
 
-    # 向量维度（BAAI/bge-small-zh-v1.5）
-    VECTOR_SIZE = 512
+    # 向量维度（BAAI/bge-m3）
+    VECTOR_SIZE = 1024
 
     # 相似度阈值（用于去重）
     SIMILARITY_THRESHOLD = 0.95
@@ -64,15 +65,17 @@ class QdrantKnowledgeBase:
     def __init__(
         self,
         storage_path: str = "/home/shang/qdrant_data",
-        model_name: str = "BAAI/bge-small-zh-v1.5",
-        device: str = "cuda"
+        model_name: str = "BAAI/bge-m3",
+        device: str = "cuda",
+        model_path: Optional[str] = None
     ):
         """初始化知识库
 
         Args:
             storage_path: Qdrant 数据存储路径
-            model_name: 嵌入模型名称
+            model_name: 嵌入模型名称（如果提供了 model_path，此参数仅用于日志）
             device: 计算设备（cuda 或 cpu）
+            model_path: 本地模型路径（可选，如果提供则从本地加载）
         """
         import time
 
@@ -91,7 +94,17 @@ class QdrantKnowledgeBase:
         # 初始化嵌入模型
         print(f"📦 加载嵌入模型...")
         t2 = time.time()
-        self.model = SentenceTransformer(model_name, device=device)
+        # 使用本地路径或模型名称
+        model_to_load = model_path if model_path else model_name
+        print(f"   模型来源: {'本地路径' if model_path else 'Hugging Face'}")
+        if model_path:
+            print(f"   模型路径: {model_path}")
+
+        self.model = SentenceTransformer(
+            model_to_load,
+            device=device,
+            model_kwargs={'torch_dtype': torch.float16}  # 启用 FP16 加速
+        )
         self.model_name = model_name
         t3 = time.time()
         print(f"⏱️  模型加载耗时: {(t3-t2)*1000:.2f}ms")

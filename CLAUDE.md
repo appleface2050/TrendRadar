@@ -57,3 +57,5 @@ confidential.json里面存放着项目所需的密码，密钥等信息
 环境说明：运行于windows10的WSL环境
 
 安装python library时，尽量使用国内镜像：https://pypi.tuna.tsinghua.edu.cn/simple
+
+从 Hugging Face 下载模型时，使用国内镜像：HF_ENDPOINT=https://hf-mirror.com

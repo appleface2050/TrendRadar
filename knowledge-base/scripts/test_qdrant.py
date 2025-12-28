@@ -3,7 +3,7 @@
 测试 Qdrant 知识库基本功能
 
 功能:
-1. 下载 BGE-M3 模型（首次运行）
+1. 加载本地 BGE-M3 模型
 2. 测试向量化功能
 3. 测试文档上传
 4. 测试检索功能
@@ -19,6 +19,9 @@ sys.path.insert(0, str(scripts_dir))
 
 from qdrant_kb import QdrantKnowledgeBase
 
+# 本地 BGE-M3 模型路径
+LOCAL_MODEL_PATH = "~/.cache/huggingface/hub/models--BAAI--bge-m3/snapshots/5617a9f61b028005a4858fdac845db406aefb181"
+
 
 def test_embedding():
     """测试嵌入模型"""
@@ -26,7 +29,13 @@ def test_embedding():
     print("测试 1: 嵌入模型")
     print("="*60)
 
-    kb = QdrantKnowledgeBase(storage_path="./test_qdrant_data")
+    # 展开波浪号路径
+    model_path = Path(LOCAL_MODEL_PATH).expanduser()
+
+    kb = QdrantKnowledgeBase(
+        storage_path="./test_qdrant_data",
+        model_path=str(model_path)
+    )
 
     # 测试文本
     test_text = "收益率曲线倒挂是经济衰退的重要先行指标"
@@ -210,7 +219,7 @@ def main():
     print("Qdrant 知识库功能测试")
     print("="*60)
     print("\n⚠️  注意:")
-    print("  - 首次运行会下载 BGE-M3 模型（约 2GB）")
+    print("  - 使用本地 BGE-M3 模型（无需下载）")
     print("  - 测试数据将保存在 ./test_qdrant_data/")
     print("  - 测试完成后可删除测试数据\n")
 
