@@ -81,3 +81,6 @@ knowledge-base/.upload_record.json
 # Qdrant 本地数据目录
 qdrant_data/
 test_qdrant_data/
+
+# SCIP 索引文件
+.scip/
