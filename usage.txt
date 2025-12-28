@@ -11,6 +11,11 @@ sh /home/shang/git/Indeptrader/knowledge-base/scripts/start_kb_server.sh
 python3 /home/shang/git/Indeptrader/knowledge-base/scripts/qdrant_kb.py upload \
   --dir "/home/shang/git/Indeptrader/knowledge-base"
 
+# 搜索知识库
+python /home/shang/git/Indeptrader/knowledge-base/scripts/kb_client.py search --query "你的问题"
+
+# 查看统计信息
+python /home/shang/git/Indeptrader/knowledge-base/scripts/kb_client.py stats
 
 
 

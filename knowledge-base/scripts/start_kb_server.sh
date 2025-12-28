@@ -19,7 +19,7 @@ echo $! > kb_server.pid
 
 # 等待服务启动
 echo "⏳ 等待服务启动..."
-sleep 5
+sleep 10
 
 # 检查服务是否启动成功
 if curl -s http://localhost:8000/health > /dev/null; then
