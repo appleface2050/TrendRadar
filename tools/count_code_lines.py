@@ -125,6 +125,14 @@ def scan_directory(root_dir: str, ignore_dirs: Set[str]) -> Dict[str, int]:
             if file.endswith('.csv'):
                 continue
 
+            # 跳过非代码文件
+            non_code_extensions = {
+                '.txt', '.pkl', '.pdf', '.db', '.sqlite', '.db-wal', '.db-shm',
+                '.xls', '.xlsx', '.xlsm', '.log', '.pid', '.scip', '.identifier'
+            }
+            if any(file.lower().endswith(ext) for ext in non_code_extensions):
+                continue
+
             file_path = os.path.join(root, file)
             language = get_language(file_path)
             lines = count_lines(file_path)
