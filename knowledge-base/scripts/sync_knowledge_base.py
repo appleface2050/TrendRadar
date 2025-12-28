@@ -537,6 +537,7 @@ class KnowledgeBaseSync:
         }
 
         for i, file_path in enumerate(files, 1):
+            file_start_time = time.time()
             self._log(f"[{i}/{len(files)}] 添加: {Path(file_path).name}")
 
             result = self.upload_document(
@@ -551,7 +552,8 @@ class KnowledgeBaseSync:
                     results["skipped"] += 1
                 else:
                     chunks = result.get("chunks", 0)
-                    self._log(f"   ✅ 成功添加 {chunks} 个数据块")
+                    file_elapsed = time.time() - file_start_time
+                    self._log(f"   ✅ 成功添加 {chunks} 个数据块 (耗时: {file_elapsed:.2f}秒)")
                     results["success"] += 1
             else:
                 error = result.get("error", "Unknown error")
@@ -632,8 +634,17 @@ class KnowledgeBaseSync:
 
         self._log("")
 
-        # 3. 执行同步
+        # 3. 检查是否需要更新
+        if not files_to_delete and not files_to_add:
+            self._log("✅ 知识库已是最新，无需更新")
+            total_timer.stop()
+            self._log(f"⏱️  检查耗时: {total_timer.format_elapsed()}")
+            self._log("")
+            return {"needs_update": False}
+
+        # 4. 执行同步
         sync_results = {
+            "needs_update": True,
             "delete": {},
             "add": {}
         }
@@ -644,7 +655,7 @@ class KnowledgeBaseSync:
         if not delete_only and files_to_add:
             sync_results["add"] = self.add_new_files(files_to_add, dry_run, chunk_size)
 
-        # 4. 打印总结
+        # 5. 打印总结
         self._print_summary(sync_results, dry_run, total_timer)
 
         return sync_results
@@ -812,30 +823,93 @@ def start_kb_server(script_path: str = None, verbose: bool = True) -> bool:
     if verbose:
         print(f"   📜 使用启动脚本: {script_path}")
 
+    # 检查服务是否已经在运行
+    if check_port_open('localhost', 8000):
+        if verbose:
+            print(f"   ✅ 服务已在运行中（端口 8000 已开放）\n")
+        return True
+
+    # 等待所有 sync_knowledge_base.py 进程退出
+    if verbose:
+        print("   ⏳ 等待同步脚本完成...")
+    max_wait = 5
+    for i in range(max_wait):
+        result = subprocess.run(
+            ['pgrep', '-f', 'sync_knowledge_base.py'],
+            capture_output=True,
+            text=True
+        )
+        if not result.stdout.strip():
+            if verbose and i > 0:
+                print(f"   ✅ 同步脚本已完成 (等待 {i}秒)")
+            break
+        time.sleep(1)
+    else:
+        if verbose:
+            print(f"   ⚠️  同步脚本仍在运行，但继续尝试启动服务")
+
     try:
-        # 使用后台方式启动脚本
+        # 使用后台方式启动脚本，创建新会话以独立运行
+        # 使用 PIPE 捕获输出，但使用 start_new_session 确保进程独立
         process = subprocess.Popen(
             ['bash', str(script_path)],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            start_new_session=True
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            start_new_session=True  # 创建新的会话，使进程独立于父进程
         )
 
         if verbose:
             print(f"   ✅ 启动命令已执行 (PID: {process.pid})")
             print("   ⏳ 等待服务启动...")
 
-        # 等待服务启动
-        max_wait = 10
+        # 等待服务启动（启动脚本会等待 10 秒）
+        max_wait = 15
         for i in range(max_wait):
             time.sleep(1)
+
+            # 检查脚本进程是否已完成
+            return_code = process.poll()
+            if return_code is not None:
+                # 脚本已完成，检查输出
+                stdout, stderr = process.communicate()
+                if return_code == 0:
+                    # 启动成功
+                    if check_port_open('localhost', 8000):
+                        if verbose:
+                            print(f"   ✅ 服务已启动 (耗时 {i+1}秒)\n")
+                        return True
+                    else:
+                        # 脚本返回成功但端口未开放
+                        if verbose:
+                            print(f"   ⚠️  启动脚本完成但端口未开放")
+                            print(f"   输出: {stdout}")
+                        time.sleep(5)  # 额外等待
+                        if check_port_open('localhost', 8000):
+                            if verbose:
+                                print(f"   ✅ 服务已启动 (延迟启动)\n")
+                            return True
+                        return False
+                else:
+                    # 启动失败
+                    if verbose:
+                        print(f"   ⚠️  服务启动失败")
+                        if stdout:
+                            print(f"   输出: {stdout}")
+                        if stderr:
+                            print(f"   错误: {stderr}")
+                        print()
+                    return False
+
+            # 检查端口是否已开放
             if check_port_open('localhost', 8000):
                 if verbose:
                     print(f"   ✅ 服务已启动 (耗时 {i+1}秒)\n")
                 return True
 
+        # 超时但脚本还在运行
         if verbose:
-            print(f"   ⚠️  服务启动超时，但进程已创建\n")
+            print(f"   ⚠️  服务启动超时，但脚本仍在运行\n")
         return True
 
     except Exception as e:
@@ -1014,8 +1088,21 @@ def main():
     # auto_restart 默认为 True，除非指定了 --no-auto-restart
     auto_restart = not args.no_auto_restart
 
-    # 自动停止服务
+    # 检查服务是否在运行（用于后续判断是否需要启动）
+    service_was_running = False
     if auto_restart:
+        # 先检查服务是否在运行
+        try:
+            result = subprocess.run(
+                ['pgrep', '-f', 'knowledge_base_server.py'],
+                capture_output=True,
+                text=True
+            )
+            service_was_running = bool(result.stdout.strip())
+        except Exception:
+            service_was_running = False
+
+        # 自动停止服务
         print("\n" + "=" * 70)
         if not stop_kb_server(verbose=not args.quiet):
             print("⚠️  停止服务失败，继续执行同步...")
@@ -1070,7 +1157,7 @@ def main():
         syncer = KnowledgeBaseSync(client, model, verbose=not args.quiet)
 
         # 执行同步
-        syncer.sync(
+        sync_results = syncer.sync(
             directory=args.dir,
             delete_only=args.delete_only,
             add_only=args.add_only,
@@ -1078,9 +1165,41 @@ def main():
             chunk_size=args.chunk_size
         )
 
+        # 检查是否需要更新
+        if not sync_results.get("needs_update", True):
+            print("💡 知识库已是最新，无需重启服务\n")
+            # 如果服务原本没有运行，还是要启动它
+            if auto_restart and not service_was_running and not args.dry_run:
+                print("\n" + "=" * 70)
+                print("🔄 检测到服务原本未运行，正在启动...")
+                print("=" * 70)
+
+                # 先关闭客户端，释放 Qdrant 资源
+                client.close()
+                if not args.quiet:
+                    print("   ✅ 已释放 Qdrant 客户端资源")
+
+                # 等待一下确保资源完全释放
+                time.sleep(2)
+
+                if not start_kb_server(script_path=args.start_script, verbose=not args.quiet):
+                    print("💡 请手动启动知识库服务:")
+                    print(f"   bash {Path(args.start_script) if args.start_script else Path(__file__).parent / 'start_kb_server.sh'}")
+                print("=" * 70 + "\n")
+
+                script_timer.stop()
+                sys.exit(0)
+            else:
+                client.close()
+                script_timer.stop()
+                sys.exit(0)
+
     finally:
         # 关闭客户端
-        client.close()
+        try:
+            client.close()
+        except Exception:
+            pass
 
     # 自动重启服务
     if auto_restart and not args.dry_run:

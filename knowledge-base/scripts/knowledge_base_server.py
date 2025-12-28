@@ -258,9 +258,44 @@ async def health_check():
     )
 
 
-@app.post("/search", response_model=List[SearchResult], summary="搜索知识库")
-async def search(request: SearchRequest):
-    """在知识库中搜索
+@app.get("/search", response_model=List[SearchResult], summary="搜索知识库（GET）")
+async def search_get(
+    query: str,
+    top_k: int = 5,
+    score_threshold: float = 0.5
+):
+    """在知识库中搜索（GET 方法）
+
+    - **query**: 搜索查询文本（必需，URL 参数）
+    - **top_k**: 返回前 K 个结果（默认 5，最大 100）
+    - **score_threshold**: 相似度阈值（默认 0.5）
+
+    示例:
+    - http://localhost:8000/search?query=GICS
+    - http://localhost:8000/search?query=收益率曲线&top_k=10
+    """
+    if kb_instance is None:
+        raise HTTPException(status_code=503, detail="服务未初始化")
+
+    import time
+    t0 = time.time()
+
+    results = kb_instance.search(
+        query=query,
+        top_k=min(top_k, 100),
+        score_threshold=score_threshold,
+        filters=None
+    )
+
+    t1 = time.time()
+    print(f"⏱️  搜索 '{query}' 耗时: {(t1-t0)*1000:.2f}ms, 返回 {len(results)} 个结果")
+
+    return results
+
+
+@app.post("/search", response_model=List[SearchResult], summary="搜索知识库（POST）")
+async def search_post(request: SearchRequest):
+    """在知识库中搜索（POST 方法）
 
     - **query**: 搜索查询文本（必需）
     - **top_k**: 返回前 K 个结果（默认 5，最大 100）
