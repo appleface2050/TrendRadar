@@ -13,7 +13,7 @@
 | 组件 | 版本/型号 | 说明 |
 |------|----------|------|
 | **向量数据库** | Qdrant Client（嵌入式模式） | 无需独立服务器 |
-| **嵌入模型** | BAAI/bge-small-zh-v1.5 | 512 维向量，支持中英文 |
+| **嵌入模型** | BAAI/bge-m3 | 1024 维向量，支持多语言 |
 | **文档解析** | unstructured[md] | 支持 Markdown 文档 |
 | **存储路径** | `/home/shang/qdrant_data` | 用户主目录，独立于项目代码 |
 
@@ -24,13 +24,13 @@
 - 向量维度：1024
 
 **实际部署配置：**
-- 嵌入模型：`BAAI/bge-small-zh-v1.5`（512 维）
-- 向量维度：512
+- 嵌入模型：`BAAI/bge-m3`（1024 维）
+- 向量维度：1024
 
-**调整原因：**
-1. `BAAI/bge-m3-base` 在国内网络环境下载失败
-2. 使用 HuggingFace 镜像（`hf-mirror.com`）测试后确认 `BAAI/bge-small-zh-v1.5` 可用
-3. `bge-small-zh-v1.5` 性能优异，适合中文场景
+**调整说明：**
+1. 使用 HuggingFace 镜像（`hf-mirror.com`）成功下载 `BAAI/bge-m3`
+2. `bge-m3` 性能更优，支持多语言和长文本
+3. 通过环境变量 `HF_ENDPOINT=https://hf-mirror.com` 加速下载
 
 ## 三、当前状态
 
@@ -134,7 +134,7 @@ from knowledge_base.scripts.qdrant_kb import QdrantKnowledgeBase
 # 初始化知识库
 kb = QdrantKnowledgeBase(
     storage_path="/home/shang/qdrant_data",
-    model_name="BAAI/bge-small-zh-v1.5",
+    model_name="BAAI/bge-m3",
     device="cuda"  # 或 "cpu"
 )
 
@@ -202,13 +202,9 @@ results = self.client.query_points(
 
 **问题 2：模型配置调整**
 ```python
-# 原配置
+# 当前配置
 VECTOR_SIZE = 1024
-model_name: str = "BAAI/bge-m3-base"
-
-# 调整后
-VECTOR_SIZE = 512
-model_name: str = "BAAI/bge-small-zh-v1.5"
+model_name: str = "BAAI/bge-m3"
 ```
 
 ## 六、数据管理
@@ -319,7 +315,7 @@ results = kb.search("测试查询")
 
 ## 八、性能参考
 
-**基于 BAAI/bge-small-zh-v1.5 (512 维)：**
+**基于 BAAI/bge-m3 (1024 维)：**
 
 | 指标 | 数值 |
 |------|------|
@@ -341,7 +337,7 @@ results = kb.search("测试查询")
 │  │  QdrantKnowledgeBase (qdrant_kb.py)        │    │
 │  │                                             │    │
 │  │  - QdrantClient (embedded mode)            │    │
-│  │  - BAAI/bge-small-zh-v1.5 嵌入模型         │    │
+│  │  - BAAI/bge-m3 嵌入模型                   │    │
 │  │  - 文档分块 (500 字符/块)                  │    │
 │  │  - 智能去重 (MD5 + 文件路径)               │    │
 │  └────────────────────────────────────────────┘    │
@@ -387,7 +383,7 @@ results = kb.search("测试查询")
 - **核心代码：** [knowledge-base/scripts/qdrant_kb.py](knowledge-base/scripts/qdrant_kb.py)
 - **部署方案：** [QDRANT_DEPLOYMENT_PLAN.md](QDRANT_DEPLOYMENT_PLAN.md)
 - **Qdrant 官方文档：** https://qdrant.tech/documentation/
-- **BGE 模型：** https://huggingface.co/BAAI/bge-small-zh-v1.5
+- **BGE 模型：** https://huggingface.co/BAAI/bge-m3
 
 ## 十二、快速参考
 

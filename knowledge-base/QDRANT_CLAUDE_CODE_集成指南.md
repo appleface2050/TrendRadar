@@ -289,7 +289,7 @@ python3 knowledge-base/scripts/knowledge_base_server.py --port 9000
 
 **症状:**
 ```
-OSError: Can't load tokenizer for 'BAAI/bge-small-zh-v1.5'
+OSError: Can't load tokenizer for 'BAAI/bge-m3'
 ```
 
 **解决:**

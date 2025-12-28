@@ -29,7 +29,7 @@ class QdrantKnowledgeMCP:
     def __init__(
         self,
         storage_path: str = "/home/shang/qdrant_data",
-        model_name: str = "BAAI/bge-small-zh-v1.5",
+        model_name: str = "BAAI/bge-m3",
         device: str = "cuda"
     ):
         """初始化知识库客户端
@@ -295,7 +295,7 @@ async def main():
     try:
         kb_client = QdrantKnowledgeMCP(
             storage_path="/home/shang/qdrant_data",
-            model_name="BAAI/bge-small-zh-v1.5",
+            model_name="BAAI/bge-m3",
             device="cuda"  # 如果没有 GPU，改为 "cpu"
         )
     except Exception as e:

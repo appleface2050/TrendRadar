@@ -90,7 +90,7 @@ python3 /home/shang/git/Indeptrader/knowledge-base/scripts/sync_knowledge_base.p
 | `--storage` | ❌ | `/home/shang/qdrant_data` | Qdrant 数据存储路径 |
 | `--qdrant-url` | ❌ | - | Qdrant 服务 URL（例如：http://localhost:6333） |
 | `--qdrant-port` | ❌ | `6333` | Qdrant 服务端口 |
-| `--model-name` | ❌ | `BAAI/bge-small-zh-v1.5` | 嵌入模型名称 |
+| `--model-name` | ❌ | `BAAI/bge-m3` | 嵌入模型名称 |
 | `--device` | ❌ | `cuda` | 计算设备（cuda 或 cpu） |
 | `--delete-only` | ❌ | - | 仅删除本地已不存在的文件 |
 | `--add-only` | ❌ | - | 仅添加本地新文件 |

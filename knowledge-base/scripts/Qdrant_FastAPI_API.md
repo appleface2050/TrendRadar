@@ -125,7 +125,7 @@ curl http://localhost:8000/stats
 **响应:**
 ```json
 {
-  "model_name": "BAAI/bge-small-zh-v1.5",
+  "model_name": "BAAI/bge-m3",
   "device": "cuda",
   "vectors_count": 1234,
   "segments_count": 4

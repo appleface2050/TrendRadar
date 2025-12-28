@@ -52,7 +52,7 @@ def test_token_savings():
     print("📦 初始化知识库...")
     kb = QdrantKnowledgeBase(
         storage_path="/home/shang/qdrant_data",
-        model_name="BAAI/bge-small-zh-v1.5",
+        model_name="BAAI/bge-m3",
         device="cuda"
     )
     print("✅ 知识库初始化完成\n")
