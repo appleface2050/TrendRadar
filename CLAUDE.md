@@ -3,6 +3,13 @@ library/API documentation. This means you should automatically use the Context7 
 tools to resolve library id and get library docs without me having to explicitly ask.
 README.md文件不要添加许可证和联系方式内容。
 
+## 报告生成规范
+
+当生成项目报告（如阶段完成报告、总结报告等）时：
+- **更新时间格式**：必须包含日期和时间（YYYY-MM-DD HH:MM:SS）
+- **示例**：`*更新时间：2025-12-29 17:30:45*`
+- **用途**：精确追踪报告版本和修改历史
+
 ## 知识库使用优先级（重要！为节省 token 和时间）
 
 **当回答问题时，请按以下优先级查询知识库：**
@@ -59,3 +66,4 @@ confidential.json里面存放着项目所需的密码，密钥等信息
 安装python library时，尽量使用国内镜像：https://pypi.tuna.tsinghua.edu.cn/simple
 
 从 Hugging Face 下载模型时，使用国内镜像：HF_ENDPOINT=https://hf-mirror.com
+
