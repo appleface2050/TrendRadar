@@ -165,7 +165,7 @@ class USDFM(BaseDFM):
 
     def fetch_from_csv(
         self,
-        csv_path: str = 'data/csv/us_all_indicators.csv',
+        csv_path: str = 'data/processed/us/all_indicators.csv',
         start_date: str = '2014-01-01',
         end_date: Optional[str] = None
     ) -> pd.DataFrame:
@@ -370,7 +370,7 @@ def test_us_dfm():
     # 从CSV加载数据
     print("\n[1] 加载数据...")
     data = us_dfm.fetch_from_csv(
-        csv_path='data/csv/us_all_indicators.csv',
+        csv_path='data/processed/us/all_indicators.csv',
         start_date='2014-01-01'
     )
 

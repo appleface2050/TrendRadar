@@ -404,7 +404,7 @@ class USNowcastingEngine(NowcastingEngine):
 
     def load_from_csv(
         self,
-        csv_path: str = 'data/csv/us_all_indicators.csv',
+        csv_path: str = 'data/processed/us/all_indicators.csv',
         target_csv_path: Optional[str] = None,
         start_date: str = '2010-01-01'
     ) -> 'USNowcastingEngine':
@@ -511,7 +511,7 @@ def test_nowcasting_engine():
     # 从CSV加载数据并拟合
     try:
         engine.load_from_csv(
-            csv_path='data/csv/us_all_indicators.csv',
+            csv_path='data/processed/us/all_indicators.csv',
             start_date='2014-01-01'
         )
 

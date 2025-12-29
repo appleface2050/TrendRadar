@@ -416,7 +416,7 @@ class MarketRiskIndicators:
 
         return high_risk
 
-    def export_to_csv(self, output_path='data/csv/market_risk_indicators.csv'):
+    def export_to_csv(self, output_path='data/derived/indicators/market_risk_indicators.csv'):
         """
         导出指标到CSV
 

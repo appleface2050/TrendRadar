@@ -6,7 +6,7 @@ import time
 from datetime import datetime
 from typing import Dict, List, Tuple
 
-CSV_FILE = "Macroeconomic/data/fred_monthly_money_supply/money_supply_m1_m2_monthly.csv"
+CSV_FILE = "../../data/fred_monthly_money_supply/money_supply_m1_m2_monthly.csv"
 FRED_M1_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=M1SL"
 FRED_M2_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=M2SL"
 

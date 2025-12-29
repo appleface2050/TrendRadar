@@ -85,18 +85,23 @@ try:
 
     print("\n✅ 数据获取完成")
 
-    # 保存数据
-    output_dir = 'data/csv'
-    os.makedirs(output_dir, exist_ok=True)
+    # 保存数据到新目录结构
+    # VIX、DXY等全球数据 → processed/global
+    # 国债收益率 → derived/yield
+    output_dir_global = '../../data/processed/global'
+    output_dir_yield = '../../data/derived/yield'
+    os.makedirs(output_dir_global, exist_ok=True)
+    os.makedirs(output_dir_yield, exist_ok=True)
 
-    vix.to_csv(f'{output_dir}/vix_{YEARS_OF_DATA}years.csv')
-    dxy.to_csv(f'{output_dir}/dxy_{YEARS_OF_DATA}years.csv')
-    us_yield_10y.to_csv(f'{output_dir}/us_yield_10y_{YEARS_OF_DATA}years.csv')
+    vix.to_csv(f'{output_dir_global}/vix_{YEARS_OF_DATA}years.csv')
+    dxy.to_csv(f'{output_dir_global}/dxy_{YEARS_OF_DATA}years.csv')
+    us_yield_10y.to_csv(f'{output_dir_yield}/us_yield_10y_{YEARS_OF_DATA}years.csv')
 
     if 'yield_curve' in locals():
-        yield_curve[['yield_curve_slope']].to_csv(f'{output_dir}/yield_curve_slope_{YEARS_OF_DATA}years.csv')
+        yield_curve[['yield_curve_slope']].to_csv(f'{output_dir_yield}/yield_curve_slope_{YEARS_OF_DATA}years.csv')
 
-    print(f"✓ 数据已保存到 {output_dir}/")
+    print(f"✓ 全球数据已保存到 {output_dir_global}/")
+    print(f"✓ 收益率数据已保存到 {output_dir_yield}/")
 
 except Exception as e:
     print(f"\n❌ 数据获取失败：{str(e)}")

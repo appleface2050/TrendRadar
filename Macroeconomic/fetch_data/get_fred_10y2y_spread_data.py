@@ -6,7 +6,7 @@ import time
 from datetime import datetime
 from typing import Dict, List, Tuple
 
-CSV_FILE = "Macroeconomic/data/fred_10y2y_spread/10y2y_spread.csv"
+CSV_FILE = "../../data/fred_10y2y_spread/10y2y_spread.csv"
 FRED_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10Y2Y"
 
 def load_existing_data() -> Tuple[Dict[str, str], str]:

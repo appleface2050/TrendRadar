@@ -67,3 +67,30 @@ confidential.json里面存放着项目所需的密码，密钥等信息
 
 从 Hugging Face 下载模型时，使用国内镜像：HF_ENDPOINT=https://hf-mirror.com
 
+## 数据文件组织规范
+
+**所有获取的CSV文件统一放在根目录data文件夹下，采用三级结构**：
+
+```
+data/
+├── raw/           # Level 1: 原始数据（API直接获取）
+├── processed/     # Level 2: 处理后数据（按地区组织）
+│   ├── china/     # 中国数据
+│   ├── us/        # 美国数据
+│   └── global/    # 全球数据
+└── derived/       # Level 3: 衍生数据（模型计算结果）
+    ├── indicators/  # 风险指标
+    ├── yield/       # 收益率数据
+    └── comprehensive/ # 综合数据
+```
+
+**数据分类原则**：
+- **raw/** - API直接获取的原始数据，未经修改
+- **processed/** - 清洗、对齐后的数据，按地区组织（china/us/global）
+- **derived/** - 模型计算结果，包括风险指标、收益率等
+
+**禁止**：
+- ❌ 不要将CSV文件分散在各个子项目的data文件夹（如MacroTrading/data、Macroeconomic/data）
+- ❌ 不要在子项目下创建独立的csv文件夹
+- ✅ 所有CSV数据文件统一管理在根目录 `data/` 下
+

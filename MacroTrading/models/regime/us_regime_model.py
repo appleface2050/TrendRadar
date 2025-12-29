@@ -57,7 +57,7 @@ class USRegimeModel(MacroRegimeModel):
 
     def load_data_and_fit(
         self,
-        csv_path: str = 'data/csv/us_all_indicators.csv',
+        csv_path: str = 'data/processed/us/all_indicators.csv',
         start_date: str = '2010-01-01',
         method: str = 'pca'
     ) -> 'USRegimeModel':
@@ -208,7 +208,7 @@ def test_us_regime_model():
 
     # 加载数据并拟合
     us_regime.load_data_and_fit(
-        csv_path='data/csv/us_all_indicators.csv',
+        csv_path='data/processed/us/all_indicators.csv',
         start_date='2010-01-01'
     )
 

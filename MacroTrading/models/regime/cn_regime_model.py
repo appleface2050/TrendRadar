@@ -80,7 +80,7 @@ class CNRegimeModel(MacroRegimeModel):
             macro_data = self.dfm_model.fetch_macro_data(start_date=start_date)
         elif data_source == 'csv':
             # 如果有CSV备选
-            macro_data = pd.read_csv('data/csv/cn_all_indicators.csv', index_col=0, parse_dates=True)
+            macro_data = pd.read_csv('data/processed/china/all_indicators.csv', index_col=0, parse_dates=True)
         else:
             raise ValueError(f"未知的数据源：{data_source}")
 

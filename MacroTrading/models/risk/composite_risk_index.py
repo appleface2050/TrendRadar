@@ -459,7 +459,7 @@ class CompositeRiskIndex:
         return self.performance
 
     def export_risk_index(self, market_indicators, macro_indicators,
-                         output_path='data/csv/composite_risk_index.csv'):
+                         output_path='data/derived/indicators/composite_risk_index.csv'):
         """
         导出风险指数到CSV
 
@@ -470,7 +470,7 @@ class CompositeRiskIndex:
         macro_indicators : DataFrame
             宏观风险指标
         output_path : str
-            输出文件路径
+            输出文件路径（默认：data/derived/indicators/）
         """
         risk_index = self.predict(market_indicators, macro_indicators)
 

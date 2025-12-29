@@ -573,7 +573,7 @@ class CNPolicyRegimeModel:
 
 # 便捷函数
 def load_cn_regime_model(
-    csv_path: str = 'data/csv/cn_all_indicators_extended.csv',
+    csv_path: str = 'data/processed/china/all_indicators_extended.csv',
     start_date: str = '1950-01-01',
     n_regimes: int = 4
 ) -> CNPolicyRegimeModel:
@@ -653,7 +653,7 @@ if __name__ == '__main__':
     print("="*60)
 
     model = load_cn_regime_model(
-        csv_path='data/csv/cn_all_indicators_extended.csv',
+        csv_path='data/processed/china/all_indicators_extended.csv',
         start_date='1950-01-01',
         n_regimes=4
     )

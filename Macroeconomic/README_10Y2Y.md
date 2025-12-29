@@ -62,6 +62,8 @@ http://localhost:8088/display/10y2y_spread.html
 python Macroeconomic/fetch_data/get_fred_10y2y_spread_data.py
 ```
 
+**注意**：数据将保存到根目录的 `data/raw/fred/fred_10y2y_spread/`，遵循项目的统一数据管理规范。
+
 ## 常见问题
 
 ### Q: 为什么不能直接双击打开 HTML 文件？
@@ -83,7 +85,7 @@ pkill -f 'python -m http.server 8088'
 
 **A:** 检查以下几点：
 1. 确保使用 HTTP 服务器访问
-2. 检查数据文件是否存在：`Macroeconomic/data/fred_10y2y_spread/10y2y_spread.csv`
+2. 检查数据文件是否存在：`data/raw/fred/fred_10y2y_spread/10y2y_spread.csv`（根目录）
 3. 打开浏览器控制台查看详细错误信息（F12）
 
 ## 技术栈
@@ -126,12 +128,17 @@ Macroeconomic/
 │   └── app.js                     # 主控制器
 ├── css/
 │   └── 10y2y_spread.css           # 样式表
-├── data/fred_10y2y_spread/
-│   └── 10y2y_spread.csv           # 数据源
 ├── fetch_data/
 │   └── get_fred_10y2y_spread_data.py  # 数据获取脚本
 ├── start_server.sh                # Linux/macOS 启动脚本
 └── start_server.bat               # Windows 启动脚本
+
+数据文件位置（根目录统一管理）：
+data/
+└── raw/
+    └── fred/
+        └── fred_10y2y_spread/
+            └── 10y2y_spread.csv   # 数据源
 ```
 
 ## 使用技巧

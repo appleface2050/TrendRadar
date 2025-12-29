@@ -104,8 +104,8 @@ try:
 
     print("\n✅ 数据获取完成")
 
-    # 保存原始数据
-    output_dir = 'data/csv'
+    # 保存原始数据到根目录data/csv
+    output_dir = '../../data/processed/global'
     os.makedirs(output_dir, exist_ok=True)
 
     if vix is not None:

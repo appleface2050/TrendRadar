@@ -243,8 +243,8 @@ class FlowDataFetcher:
         # 优先使用本地CSV文件
         if use_local:
             try:
-                # 本地文件路径
-                local_file = '/home/shang/git/Indeptrader/Macroeconomic/data/fred_treasury_yield/treasury_yield_daily.csv'
+                # 本地文件路径（相对路径：根目录的data/fred_treasury_yield/）
+                local_file = '../../../data/fred_treasury_yield/treasury_yield_daily.csv'
 
                 # 读取CSV
                 df = pd.read_csv(local_file)
@@ -474,7 +474,7 @@ class FlowDataFetcher:
 
         return result
 
-    def export_to_csv(self, data_dict, output_dir='data/csv/'):
+    def export_to_csv(self, data_dict, output_dir='../../data/derived/indicators/'):
         """
         将数据导出为CSV文件
 
@@ -483,7 +483,7 @@ class FlowDataFetcher:
         data_dict : dict
             包含所有数据的字典
         output_dir : str
-            输出目录
+            输出目录（默认：根目录的data/derived/indicators/）
         """
         import os
 

@@ -447,7 +447,7 @@ def test_rolling_dfm():
 
     us_dfm = USDFM(n_factors=3)
     data = us_dfm.fetch_from_csv(
-        csv_path='data/csv/us_all_indicators.csv',
+        csv_path='data/processed/us/all_indicators.csv',
         start_date='2010-01-01'
     )
 
