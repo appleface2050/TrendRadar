@@ -11,6 +11,8 @@ sh /home/shang/git/Indeptrader/knowledge-base/scripts/start_kb_server.sh
 重启
 sh /home/shang/git/Indeptrader/knowledge-base/scripts/restart_kb_server.sh
 
+http://localhost:8000/
+
 # Qdrant双向同步
 python3 /home/shang/git/Indeptrader/knowledge-base/scripts/sync_knowledge_base.py \
   --dir /home/shang/git/Indeptrader/knowledge-base
@@ -30,6 +32,23 @@ python /home/shang/git/Indeptrader/RunningV2/dashboard/app.py
 
 
 
+# Deep-research
+
+自营交易员，如何构建宏观经济研究框架，用于指导个人投资，投资标的包括A股，美股，港股，债券和大宗商品
+
+1. 3-90日交易时间。也关注波段。
+2. A股，美股，港股，期货市场，债券。
+3. 缺少宏观经济分析方法论。
+4. 宏观周期判断，交易信号，行业分析，风险管理。
+5. 不需要考虑时间成本和人员成本，本人是自身程序员，也可以获取各种数据。
 
 
+报告需要给出详细参考文献
 
+
+关键词：Nowcasting，MIDAS，另类数据，产业链通胀传导的微观映射，HMM，动态因子模型，四大宏观支柱（增长、通胀、流动性、政策），宏观状态向多资产价格的传导机制与映射模型，叙事经济学
+
+参考资料：
+Hamilton, J. D. (1989). “A New Approach to the Economic Analysis of Nonstationary Time Series and the Business Cycle”. Econometrica.
+OECD Composite Leading Indicators (CLI) Methodology.
+纽约联储、欧洲央行“Nowcasting”模型技术文档。
