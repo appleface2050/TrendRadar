@@ -1,0 +1,237 @@
+"""
+数据获取和导出脚本
+从 FRED 和 Tushare 获取宏观数据并导出为 CSV
+"""
+import sys
+from pathlib import Path
+import pandas as pd
+from datetime import datetime
+import logging
+
+# 添加项目根目录到 Python 路径
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(project_root))
+
+from data.us.us_data_fetcher import USDataFetcher
+from data.cn.tushare_fetcher import CNDataFetcher
+
+# 设置日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# 创建 CSV 输出目录
+CSV_OUTPUT_DIR = project_root / 'data' / 'csv'
+CSV_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def fetch_us_data():
+    """获取美国宏观数据并导出为 CSV"""
+    logger.info("=" * 60)
+    logger.info("开始获取美国宏观数据（FRED）")
+    logger.info("=" * 60)
+
+    try:
+        fetcher = USDataFetcher()
+
+        # 获取核心指标（最近10年数据）
+        start_date = '2014-01-01'
+
+        # GDP
+        logger.info("\n获取 GDP 数据...")
+        gdp_data = fetcher.fetch_indicator('GDP', start=start_date)
+        if not gdp_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'us_gdp.csv'
+            gdp_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ GDP 数据已保存: {output_file} ({len(gdp_data)} 条)")
+
+        # CPI
+        logger.info("\n获取 CPI 数据...")
+        cpi_data = fetcher.fetch_indicator('CPIAUCSL', start=start_date)
+        if not cpi_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'us_cpi.csv'
+            cpi_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ CPI 数据已保存: {output_file} ({len(cpi_data)} 条)")
+
+        # 失业率
+        logger.info("\n获取失业率数据...")
+        unrate_data = fetcher.fetch_indicator('UNRATE', start=start_date)
+        if not unrate_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'us_unrate.csv'
+            unrate_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ 失业率数据已保存: {output_file} ({len(unrate_data)} 条)")
+
+        # 联邦基金利率
+        logger.info("\n获取联邦基金利率数据...")
+        fedfunds_data = fetcher.fetch_indicator('FEDFUNDS', start=start_date)
+        if not fedfunds_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'us_fedfunds.csv'
+            fedfunds_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ 联邦基金利率数据已保存: {output_file} ({len(fedfunds_data)} 条)")
+
+        # 10年期国债收益率
+        logger.info("\n获取10年期国债收益率数据...")
+        gs10_data = fetcher.fetch_indicator('GS10', start=start_date)
+        if not gs10_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'us_gs10.csv'
+            gs10_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ 10年期国债收益率数据已保存: {output_file} ({len(gs10_data)} 条)")
+
+        # 工业产值
+        logger.info("\n获取工业产值数据...")
+        indpro_data = fetcher.fetch_indicator('INDPRO', start=start_date)
+        if not indpro_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'us_indpro.csv'
+            indpro_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ 工业产值数据已保存: {output_file} ({len(indpro_data)} 条)")
+
+        # 零售销售
+        logger.info("\n获取零售销售数据...")
+        retail_data = fetcher.fetch_indicator('RSXFS', start=start_date)
+        if not retail_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'us_retail.csv'
+            retail_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ 零售销售数据已保存: {output_file} ({len(retail_data)} 条)")
+
+        # 获取所有核心指标
+        logger.info("\n获取所有核心指标...")
+        all_data = fetcher.fetch_all_core_indicators(start=start_date)
+        if not all_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'us_all_indicators.csv'
+            all_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ 所有美国指标已保存: {output_file} ({len(all_data)} 条)")
+
+        logger.info("\n" + "=" * 60)
+        logger.info("美国数据获取完成！")
+        logger.info("=" * 60)
+
+        return True
+
+    except Exception as e:
+        logger.error(f"获取美国数据失败: {str(e)}")
+        return False
+
+
+def fetch_cn_data():
+    """获取中国宏观数据并导出为 CSV"""
+    logger.info("\n" + "=" * 60)
+    logger.info("开始获取中国宏观数据（Tushare）")
+    logger.info("=" * 60)
+
+    try:
+        fetcher = CNDataFetcher()
+
+        if not fetcher.pro:
+            logger.error("Tushare API 未初始化，请检查配置")
+            return False
+
+        # 获取核心指标（最近10年数据）
+        start_date = '20140101'
+
+        # GDP
+        logger.info("\n获取 GDP 数据...")
+        gdp_data = fetcher.fetch_gdp(start_date=start_date)
+        if not gdp_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'cn_gdp.csv'
+            gdp_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ GDP 数据已保存: {output_file} ({len(gdp_data)} 条)")
+
+        # CPI
+        logger.info("\n获取 CPI 数据...")
+        cpi_data = fetcher.fetch_cpi(start_date=start_date)
+        if not cpi_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'cn_cpi.csv'
+            cpi_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ CPI 数据已保存: {output_file} ({len(cpi_data)} 条)")
+
+        # PPI
+        logger.info("\n获取 PPI 数据...")
+        ppi_data = fetcher.fetch_ppi(start_date=start_date)
+        if not ppi_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'cn_ppi.csv'
+            ppi_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ PPI 数据已保存: {output_file} ({len(ppi_data)} 条)")
+
+        # 货币供应量
+        logger.info("\n获取货币供应量数据...")
+        money_data = fetcher.fetch_money_supply(start_date=start_date)
+        if not money_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'cn_money_supply.csv'
+            money_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ 货币供应量数据已保存: {output_file} ({len(money_data)} 条)")
+
+        # PMI
+        logger.info("\n获取 PMI 数据...")
+        pmi_data = fetcher.fetch_pmi(start_date=start_date)
+        if not pmi_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'cn_pmi.csv'
+            pmi_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ PMI 数据已保存: {output_file} ({len(pmi_data)} 条)")
+
+        # Shibor（最近1年）
+        logger.info("\n获取 Shibor 数据...")
+        from datetime import timedelta
+        shibor_start = (datetime.now() - timedelta(days=365)).strftime('%Y%m%d')
+        shibor_data = fetcher.fetch_shibor(start_date=shibor_start)
+        if not shibor_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'cn_shibor.csv'
+            shibor_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ Shibor 数据已保存: {output_file} ({len(shibor_data)} 条)")
+
+        # 获取所有核心指标
+        logger.info("\n获取所有核心指标...")
+        all_data = fetcher.fetch_all_core_indicators(start_date=start_date)
+        if not all_data.empty:
+            output_file = CSV_OUTPUT_DIR / 'cn_all_indicators.csv'
+            all_data.to_csv(output_file, index=False, encoding='utf-8-sig')
+            logger.info(f"✓ 所有中国指标已保存: {output_file} ({len(all_data)} 条)")
+
+        logger.info("\n" + "=" * 60)
+        logger.info("中国数据获取完成！")
+        logger.info("=" * 60)
+
+        return True
+
+    except Exception as e:
+        logger.error(f"获取中国数据失败: {str(e)}")
+        return False
+
+
+def main():
+    """主函数"""
+    logger.info("\n" + "=" * 60)
+    logger.info("数据获取和导出脚本")
+    logger.info("=" * 60)
+    logger.info(f"CSV 输出目录: {CSV_OUTPUT_DIR}")
+    logger.info(f"开始时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+    # 获取美国数据
+    us_success = fetch_us_data()
+
+    # 获取中国数据
+    cn_success = fetch_cn_data()
+
+    # 总结
+    logger.info("\n" + "=" * 60)
+    logger.info("任务完成总结")
+    logger.info("=" * 60)
+    logger.info(f"美国数据: {'✓ 成功' if us_success else '✗ 失败'}")
+    logger.info(f"中国数据: {'✓ 成功' if cn_success else '✗ 失败'}")
+    logger.info(f"结束时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    logger.info("=" * 60)
+
+    if us_success or cn_success:
+        logger.info(f"\nCSV 文件已保存到: {CSV_OUTPUT_DIR}")
+        # 列出所有生成的文件
+        csv_files = list(CSV_OUTPUT_DIR.glob('*.csv'))
+        if csv_files:
+            logger.info("\n生成的文件:")
+            for f in sorted(csv_files):
+                file_size = f.stat().st_size
+                logger.info(f"  - {f.name} ({file_size:,} bytes)")
+
+
+if __name__ == "__main__":
+    main()

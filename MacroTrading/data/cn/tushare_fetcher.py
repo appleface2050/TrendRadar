@@ -15,7 +15,7 @@ from pathlib import Path
 project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from configs.db_config import TUSHARE_TOKEN
+from configs.db_config import TUSHARE_TOKEN, TUSHARE_HTTP_URL
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -74,12 +74,19 @@ class CNDataFetcher:
 
         if not self.token:
             logger.warning("未设置 Tushare token，某些功能可能受限")
-            logger.warning("请设置 TUSHARE_TOKEN 环境变量或在配置文件中设置")
+            logger.warning("请在 confidential.json 中设置 TUSHARE_DataApi__token")
             self.pro = None
         else:
             try:
-                self.pro = ts.pro_api(self.token)
-                logger.info("成功初始化 Tushare API")
+                # 使用标准方式初始化
+                self.pro = ts.pro_api()
+
+                # 设置特殊的 endpoint（按照 example 的方式）
+                self.pro._DataApi__token = self.token
+                self.pro._DataApi__http_url = TUSHARE_HTTP_URL
+
+                logger.info("成功初始化 Tushare API（使用自定义 endpoint）")
+                logger.info(f"API URL: {TUSHARE_HTTP_URL}")
             except Exception as e:
                 logger.error(f"初始化 Tushare API 失败: {str(e)}")
                 self.pro = None
