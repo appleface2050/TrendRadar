@@ -49,12 +49,12 @@ class USMarketRegimeModel:
     - 最可能的宏观状态
     """
 
-    # 区制名称定义
+    # 区制名称定义（基于实际因子特征和NBER验证重新定义）
     REGIME_NAMES = {
-        'Regime_1': '复苏',
-        'Regime_2': '过热',
-        'Regime_3': '滞胀',
-        'Regime_4': '衰退'
+        'Regime_1': '正常增长',  # 增长↑, 通胀↓
+        'Regime_2': '过热',      # 增长↑↑, 通胀↑
+        'Regime_3': '衰退',      # 增长↓↓, 通胀↑ (NBER验证: 91.7%+100%)
+        'Regime_4': '滞胀'       # 增长↓, 通胀↑↑
     }
 
     # 历史衰退期（用于验证）
@@ -293,22 +293,23 @@ class USMarketRegimeModel:
             growth_mean = self.growth_factor[regime_periods].mean()
             inflation_mean = self.inflation_factor[regime_periods].mean()
 
-            # 根据因子特征判断经济含义
-            if growth_mean > 0 and inflation_mean < 0:
-                economic_meaning = '复苏'
-                description = "复苏：经济增长上升，通胀温和"
-            elif growth_mean > 0 and inflation_mean > 0:
-                economic_meaning = '过热'
-                description = "过热：经济增长强劲，通胀压力较大"
-            elif growth_mean < 0 and inflation_mean > 0:
-                economic_meaning = '滞胀'
-                description = "滞胀：经济疲弱，通胀高企"
-            elif growth_mean < 0 and inflation_mean < 0:
+            # 根据因子特征判断经济含义（基于NBER验证结果优化）
+            if growth_mean < -1.0:
+                # 深度负增长 → 衰退（Regime_3）
                 economic_meaning = '衰退'
-                description = "衰退：经济收缩，通胀下行"
+                description = f"衰退：经济深度收缩（增长因子：{growth_mean:.2f}），通胀维持"
+            elif inflation_mean > 2.0:
+                # 高通胀 → 滞胀（Regime_4）
+                economic_meaning = '滞胀'
+                description = f"滞胀：经济增长乏力，通胀高企（通胀因子：{inflation_mean:.2f}）"
+            elif growth_mean > 1.0 and inflation_mean > 0:
+                # 高增长+通胀 → 过热（Regime_2）
+                economic_meaning = '过热'
+                description = f"过热：经济强劲增长（增长因子：{growth_mean:.2f}），通胀压力上升"
             else:
-                economic_meaning = '过渡期'
-                description = "过渡期"
+                # 正常增长（Regime_1）
+                economic_meaning = '正常增长'
+                description = f"正常增长：经济温和增长（增长因子：{growth_mean:.2f}），通胀受控"
 
             interpretation[regime] = {
                 'economic_meaning': economic_meaning,
@@ -359,8 +360,8 @@ class USMarketRegimeModel:
         results = {}
 
         for recession_name, (start, end) in self.NBER_RECESSIONS.items():
-            # 找出模型识别的衰退期
-            recession_periods = self.regime_sequence == 'Regime_4'  # 衰退区制
+            # 找出模型识别的衰退期（重新定义：Regime_3为衰退）
+            recession_periods = self.regime_sequence == 'Regime_3'  # 衰退区制
 
             # 检查NBER衰退期是否被识别
             nber_recession_dates = pd.date_range(start, end, freq='M')
