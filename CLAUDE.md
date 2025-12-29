@@ -71,6 +71,38 @@ confidential.json里面存放着项目所需的密码，密钥等信息
 
 从 Hugging Face 下载模型时，使用国内镜像：HF_ENDPOINT=https://hf-mirror.com
 
+## Tushare API 特殊调用方法
+
+**重要**：项目中使用的 Tushare API 需要特殊的初始化方式，不要使用标准的 `ts.pro_api(token=xxx)` 方法。
+
+**正确调用方式**：
+
+```python
+import tushare as ts
+
+# 第一步：创建实例（不传 token）
+pro = ts.pro_api()
+
+# 第二步：直接设置私有属性
+pro._DataApi__token = 'your_token_here'
+
+# 第三步：如果使用自定义 endpoint（可选）
+pro._DataApi__http_url = 'http://1w1a.xiximiao.com/dataapi'
+```
+
+**错误调用方式**（会导致认证失败）：
+```python
+# ❌ 错误：会返回 "您的token不对，请确认"
+pro = ts.pro_api(token='your_token_here')
+```
+
+**Token 配置位置**：
+- 配置文件：`confidential.json`
+- 参考示例：`MacroTrading/configs/db_config.py`
+- 完整示例：`tushare_example.py`
+
+---
+
 ## 数据文件组织规范
 
 **所有获取的CSV文件统一放在根目录data文件夹下，采用三级结构**：

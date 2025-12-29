@@ -1,0 +1,7 @@
+﻿date,yield
+# 请使用 FRED 或 yfinance 获取美国10年期国债收益率
+# FRED: https://fred.stlouisfed.org/series/GS10
+# 代码示例:
+# import pandas_datareader as pdr
+# start = datetime(2016, 1, 1)
+# us_yield = pdr.DataReader('GS10', 'fred', start=start)
