@@ -3,6 +3,10 @@ library/API documentation. This means you should automatically use the Context7 
 tools to resolve library id and get library docs without me having to explicitly ask.
 README.md文件不要添加许可证和联系方式内容。
 
+**禁止修改以下文件**：
+- ❌ **usage.txt** - 个人使用备忘录，禁止任何更新或修改
+- ❌ 不要自动修改、整理或优化 usage.txt 的内容
+
 ## 报告生成规范
 
 当生成项目报告（如阶段完成报告、总结报告等）时：
