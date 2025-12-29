@@ -78,8 +78,8 @@ class CNDataFetcher:
             self.pro = None
         else:
             try:
-                # 使用标准方式初始化
-                self.pro = ts.pro_api()
+                # 使用标准方式初始化（传入 token 避免初始化错误）
+                self.pro = ts.pro_api(self.token)
 
                 # 设置特殊的 endpoint（按照 example 的方式）
                 self.pro._DataApi__token = self.token
@@ -116,26 +116,20 @@ class CNDataFetcher:
                 return pd.DataFrame()
 
             # 标准化列名
-            df = df.rename(columns={
-                'stat_year': 'year',
-                'gdp': 'value',
+            result_df = pd.DataFrame({
+                'indicator_code': 'GDP',
+                'indicator_name': '国内生产总值',
+                'date': df['quarter'].apply(lambda x: pd.to_datetime(f"{x.split('Q')[0]}-{int(x.split('Q')[1])*3:02d}-01")),
+                'value': df['gdp'],
+                'frequency': 'q'
             })
 
-            # 添加指标信息
-            df['indicator_code'] = 'GDP'
-            df['indicator_name'] = '国内生产总值'
+            # 过滤掉无效数据
+            result_df = result_df.dropna(subset=['value'])
 
-            # 构造日期（季度数据）
-            if 'quarter' in df.columns:
-                df['date'] = df['year'].astype(str) + 'Q' + df['quarter'].astype(str)
-                df['frequency'] = 'q'
-            else:
-                df['date'] = df['year'].astype(str) + '-12-31'
-                df['frequency'] = 'a'
+            logger.info(f"成功获取 {len(result_df)} 条 GDP 数据")
 
-            logger.info(f"成功获取 {len(df)} 条 GDP 数据")
-
-            return df
+            return result_df
 
         except Exception as e:
             logger.error(f"获取 GDP 数据失败: {str(e)}")
@@ -166,15 +160,20 @@ class CNDataFetcher:
                 return pd.DataFrame()
 
             # 标准化列名
-            df['indicator_code'] = 'CPI'
-            df['indicator_name'] = '居民消费价格指数'
-            df['date'] = pd.to_datetime(df['month'], format='%Y%m')
-            df['value'] = df['cpi_ci']  # 同比
-            df['frequency'] = 'm'
+            result_df = pd.DataFrame({
+                'indicator_code': 'CPI',
+                'indicator_name': '居民消费价格指数',
+                'date': pd.to_datetime(df['month'], format='%Y%m'),
+                'value': df['nt_yoy'],  # 同比
+                'frequency': 'm'
+            })
 
-            logger.info(f"成功获取 {len(df)} 条 CPI 数据")
+            # 过滤掉无效数据
+            result_df = result_df.dropna(subset=['value'])
 
-            return df
+            logger.info(f"成功获取 {len(result_df)} 条 CPI 数据")
+
+            return result_df
 
         except Exception as e:
             logger.error(f"获取 CPI 数据失败: {str(e)}")
@@ -184,40 +183,11 @@ class CNDataFetcher:
         """
         获取 PPI 数据
 
-        Args:
-            start_date: 开始日期
-
-        Returns:
-            包含 PPI 数据的 DataFrame
+        注意：当前 Tushare API 可能不提供 cn_ppi 接口
+        此函数保留以便将来使用
         """
-        try:
-            if not self.pro:
-                logger.error("Tushare API 未初始化")
-                return pd.DataFrame()
-
-            logger.info("正在获取 PPI 数据...")
-
-            # 获取 PPI 数据
-            df = self.pro.cn_ppi(start_date=start_date)
-
-            if df.empty:
-                logger.warning("PPI 数据为空")
-                return pd.DataFrame()
-
-            # 标准化列名
-            df['indicator_code'] = 'PPI'
-            df['indicator_name'] = '工业品出厂价格指数'
-            df['date'] = pd.to_datetime(df['month'], format='%Y%m')
-            df['value'] = df['ppi_ci']  # 同比
-            df['frequency'] = 'm'
-
-            logger.info(f"成功获取 {len(df)} 条 PPI 数据")
-
-            return df
-
-        except Exception as e:
-            logger.error(f"获取 PPI 数据失败: {str(e)}")
-            return pd.DataFrame()
+        logger.warning("PPI 数据接口暂不可用，请使用 CPI 或其他指标替代")
+        return pd.DataFrame()
 
     def fetch_money_supply(self, start_date: Optional[str] = None) -> pd.DataFrame:
         """
@@ -302,16 +272,22 @@ class CNDataFetcher:
                 logger.warning("PMI 数据为空")
                 return pd.DataFrame()
 
-            # 标准化列名
-            df['indicator_code'] = 'PMI'
-            df['indicator_name'] = '制造业PMI'
-            df['date'] = pd.to_datetime(df['month'], format='%Y%m')
-            df['value'] = df['pmi']
-            df['frequency'] = 'm'
+            # 标准化列名（注意：API 返回的是 MONTH 大写）
+            # PMI012000 是制造业 PMI
+            result_df = pd.DataFrame({
+                'indicator_code': 'PMI',
+                'indicator_name': '制造业PMI',
+                'date': pd.to_datetime(df['MONTH'], format='%Y%m'),
+                'value': df['PMI012000'],  # 制造业 PMI
+                'frequency': 'm'
+            })
 
-            logger.info(f"成功获取 {len(df)} 条 PMI 数据")
+            # 过滤掉无效数据
+            result_df = result_df.dropna(subset=['value'])
 
-            return df
+            logger.info(f"成功获取 {len(result_df)} 条 PMI 数据")
+
+            return result_df
 
         except Exception as e:
             logger.error(f"获取 PMI 数据失败: {str(e)}")
@@ -346,12 +322,14 @@ class CNDataFetcher:
             df_on = df[['date', 'on']].copy()
             df_on['indicator_code'] = 'SHIBORON'
             df_on['indicator_name'] = 'Shibor隔夜利率'
+            df_on['date'] = pd.to_datetime(df_on['date'], format='%Y%m%d')
             df_on = df_on.rename(columns={'on': 'value'})
             df_on['frequency'] = 'd'
 
             df_1w = df[['date', '1w']].copy()
             df_1w['indicator_code'] = 'SHIBOR1W'
             df_1w['indicator_name'] = 'Shibor1周利率'
+            df_1w['date'] = pd.to_datetime(df_1w['date'], format='%Y%m%d')
             df_1w = df_1w.rename(columns={'1w': 'value'})
             df_1w['frequency'] = 'd'
 
