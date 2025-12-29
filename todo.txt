@@ -1,7 +1,5 @@
 
 7. 测试claude skills
 
-http://localhost:8000/stats 接口，增加显示占用存储空间
-
 
 
