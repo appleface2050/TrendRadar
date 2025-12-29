@@ -115,17 +115,20 @@ class CNDataFetcher:
                 logger.warning("GDP 数据为空")
                 return pd.DataFrame()
 
-            # 标准化列名
+            # 标准化列名（与美国数据保持一致：date,value,indicator_code,indicator_name,frequency）
             result_df = pd.DataFrame({
-                'indicator_code': 'GDP',
-                'indicator_name': '国内生产总值',
                 'date': df['quarter'].apply(lambda x: pd.to_datetime(f"{x.split('Q')[0]}-{int(x.split('Q')[1])*3:02d}-01")),
                 'value': df['gdp'],
+                'indicator_code': 'GDP',
+                'indicator_name': '国内生产总值',
                 'frequency': 'q'
             })
 
             # 过滤掉无效数据
             result_df = result_df.dropna(subset=['value'])
+
+            # 按日期升序排序（与美国数据一致）
+            result_df = result_df.sort_values('date').reset_index(drop=True)
 
             logger.info(f"成功获取 {len(result_df)} 条 GDP 数据")
 
@@ -159,17 +162,20 @@ class CNDataFetcher:
                 logger.warning("CPI 数据为空")
                 return pd.DataFrame()
 
-            # 标准化列名
+            # 标准化列名（与美国数据保持一致：date,value,indicator_code,indicator_name,frequency）
             result_df = pd.DataFrame({
-                'indicator_code': 'CPI',
-                'indicator_name': '居民消费价格指数',
                 'date': pd.to_datetime(df['month'], format='%Y%m'),
                 'value': df['nt_yoy'],  # 同比
+                'indicator_code': 'CPI',
+                'indicator_name': '居民消费价格指数',
                 'frequency': 'm'
             })
 
             # 过滤掉无效数据
             result_df = result_df.dropna(subset=['value'])
+
+            # 按日期升序排序（与美国数据一致）
+            result_df = result_df.sort_values('date').reset_index(drop=True)
 
             logger.info(f"成功获取 {len(result_df)} 条 CPI 数据")
 
@@ -213,32 +219,41 @@ class CNDataFetcher:
                 logger.warning("货币供应量数据为空")
                 return pd.DataFrame()
 
-            # 处理 M2
-            m2_df = df[['month', 'm2']].copy()
-            m2_df['indicator_code'] = 'M2'
-            m2_df['indicator_name'] = 'M2货币供应量'
-            m2_df['date'] = pd.to_datetime(m2_df['month'], format='%Y%m')
-            m2_df = m2_df.rename(columns={'m2': 'value'})
-            m2_df['frequency'] = 'm'
+            # 处理 M2（与美国数据保持一致：date,value,indicator_code,indicator_name,frequency）
+            m2_df = pd.DataFrame({
+                'date': pd.to_datetime(df['month'], format='%Y%m'),
+                'value': df['m2'],
+                'indicator_code': 'M2',
+                'indicator_name': 'M2货币供应量',
+                'frequency': 'm'
+            })
 
             # 处理 M1
-            m1_df = df[['month', 'm1']].copy()
-            m1_df['indicator_code'] = 'M1'
-            m1_df['indicator_name'] = 'M1货币供应量'
-            m1_df['date'] = pd.to_datetime(m1_df['month'], format='%Y%m')
-            m1_df = m1_df.rename(columns={'m1': 'value'})
-            m1_df['frequency'] = 'm'
+            m1_df = pd.DataFrame({
+                'date': pd.to_datetime(df['month'], format='%Y%m'),
+                'value': df['m1'],
+                'indicator_code': 'M1',
+                'indicator_name': 'M1货币供应量',
+                'frequency': 'm'
+            })
 
             # 处理 M0
-            m0_df = df[['month', 'm0']].copy()
-            m0_df['indicator_code'] = 'M0'
-            m0_df['indicator_name'] = 'M0货币供应量'
-            m0_df['date'] = pd.to_datetime(m0_df['month'], format='%Y%m')
-            m0_df = m0_df.rename(columns={'m0': 'value'})
-            m0_df['frequency'] = 'm'
+            m0_df = pd.DataFrame({
+                'date': pd.to_datetime(df['month'], format='%Y%m'),
+                'value': df['m0'],
+                'indicator_code': 'M0',
+                'indicator_name': 'M0货币供应量',
+                'frequency': 'm'
+            })
 
             # 合并
             result_df = pd.concat([m2_df, m1_df, m0_df], ignore_index=True)
+
+            # 过滤掉无效数据
+            result_df = result_df.dropna(subset=['value'])
+
+            # 按日期升序排序（与美国数据一致）
+            result_df = result_df.sort_values('date').reset_index(drop=True)
 
             logger.info(f"成功获取 {len(result_df)} 条货币供应量数据")
 
@@ -272,18 +287,22 @@ class CNDataFetcher:
                 logger.warning("PMI 数据为空")
                 return pd.DataFrame()
 
-            # 标准化列名（注意：API 返回的是 MONTH 大写）
+            # 标准化列名（与美国数据保持一致：date,value,indicator_code,indicator_name,frequency）
+            # 注意：API 返回的是 MONTH 大写
             # PMI012000 是制造业 PMI
             result_df = pd.DataFrame({
-                'indicator_code': 'PMI',
-                'indicator_name': '制造业PMI',
                 'date': pd.to_datetime(df['MONTH'], format='%Y%m'),
                 'value': df['PMI012000'],  # 制造业 PMI
+                'indicator_code': 'PMI',
+                'indicator_name': '制造业PMI',
                 'frequency': 'm'
             })
 
             # 过滤掉无效数据
             result_df = result_df.dropna(subset=['value'])
+
+            # 按日期升序排序（与美国数据一致）
+            result_df = result_df.sort_values('date').reset_index(drop=True)
 
             logger.info(f"成功获取 {len(result_df)} 条 PMI 数据")
 
@@ -318,23 +337,31 @@ class CNDataFetcher:
                 logger.warning("Shibor 数据为空")
                 return pd.DataFrame()
 
-            # 选择隔夜和1周利率
-            df_on = df[['date', 'on']].copy()
-            df_on['indicator_code'] = 'SHIBORON'
-            df_on['indicator_name'] = 'Shibor隔夜利率'
-            df_on['date'] = pd.to_datetime(df_on['date'], format='%Y%m%d')
-            df_on = df_on.rename(columns={'on': 'value'})
-            df_on['frequency'] = 'd'
+            # 选择隔夜和1周利率（与美国数据保持一致：date,value,indicator_code,indicator_name,frequency）
+            df_on = pd.DataFrame({
+                'date': pd.to_datetime(df['date'], format='%Y%m%d'),
+                'value': df['on'],
+                'indicator_code': 'SHIBORON',
+                'indicator_name': 'Shibor隔夜利率',
+                'frequency': 'd'
+            })
 
-            df_1w = df[['date', '1w']].copy()
-            df_1w['indicator_code'] = 'SHIBOR1W'
-            df_1w['indicator_name'] = 'Shibor1周利率'
-            df_1w['date'] = pd.to_datetime(df_1w['date'], format='%Y%m%d')
-            df_1w = df_1w.rename(columns={'1w': 'value'})
-            df_1w['frequency'] = 'd'
+            df_1w = pd.DataFrame({
+                'date': pd.to_datetime(df['date'], format='%Y%m%d'),
+                'value': df['1w'],
+                'indicator_code': 'SHIBOR1W',
+                'indicator_name': 'Shibor1周利率',
+                'frequency': 'd'
+            })
 
             # 合并
             result_df = pd.concat([df_on, df_1w], ignore_index=True)
+
+            # 过滤掉无效数据
+            result_df = result_df.dropna(subset=['value'])
+
+            # 按日期升序排序（与美国数据一致）
+            result_df = result_df.sort_values('date').reset_index(drop=True)
 
             logger.info(f"成功获取 {len(result_df)} 条 Shibor 数据")
 
@@ -395,6 +422,8 @@ class CNDataFetcher:
 
         if all_data:
             result_df = pd.concat(all_data, ignore_index=True)
+            # 确保最终结果按日期升序排序（与美国数据一致）
+            result_df = result_df.sort_values('date').reset_index(drop=True)
             logger.info(f"总共获取 {len(result_df)} 条中国宏观数据")
             return result_df
         else:
