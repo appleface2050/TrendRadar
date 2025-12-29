@@ -8,6 +8,7 @@ http://localhost:3000/
 
 启动
 sh /home/shang/git/Indeptrader/knowledge-base/scripts/start_kb_server.sh
+
 重启
 sh /home/shang/git/Indeptrader/knowledge-base/scripts/restart_kb_server.sh
 
