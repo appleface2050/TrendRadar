@@ -111,9 +111,20 @@ class KnowledgeBaseService:
         # 初始化 Qdrant 客户端
         self.client = QdrantClient(path=storage_path)
 
-        # 初始化嵌入模型（强制使用本地缓存）
+        # 初始化嵌入模型（使用本地缓存路径）
+        # 检测本地模型路径
+        cache_dir = Path.home() / ".cache" / "huggingface" / "hub"
+        local_model_path = cache_dir / "models--BAAI--bge-m3" / "snapshots" / "5617a9f61b028005a4858fdac845db406aefb181"
+
+        if local_model_path.exists():
+            print(f"✅ 使用本地模型: {local_model_path}")
+            model_path = str(local_model_path)
+        else:
+            print(f"⚠️  本地模型不存在，使用远程模型名称")
+            model_path = model_name
+
         self.model = SentenceTransformer(
-            model_name,
+            model_path,
             device=device,
             model_kwargs={'torch_dtype': torch.float16},  # 启用 FP16 加速
             local_files_only=True  # 强制使用本地缓存，不访问网络

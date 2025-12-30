@@ -12,6 +12,9 @@ fi
 
 # 启动服务
 echo "🚀 启动 Qdrant 知识库服务..."
+# 设置离线模式环境变量，避免访问网络
+export TRANSFORMERS_OFFLINE=1
+export HF_HUB_OFFLINE=1
 nohup python knowledge_base_server.py --port 8000 > kb_server.log 2>&1 &
 
 # 保存 PID
