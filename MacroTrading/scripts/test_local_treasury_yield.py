@@ -16,7 +16,7 @@ print("测试本地CSV美国国债收益率数据读取")
 print("=" * 100)
 print()
 
-from data.flow.flow_fetcher import FlowDataFetcher
+from data_handlers.flow.flow_fetcher import FlowDataFetcher
 from configs.db_config import load_confidential_config
 
 config = load_confidential_config()

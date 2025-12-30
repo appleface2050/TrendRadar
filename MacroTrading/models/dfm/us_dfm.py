@@ -19,7 +19,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from models.dfm.base_dfm import BaseDFM, SparseDFM
-from data.us.us_data_manager import USDataManager
+from data_handlers.us.us_data_manager import USDataManager
 
 
 class USDFM(BaseDFM):

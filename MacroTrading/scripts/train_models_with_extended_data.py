@@ -41,7 +41,7 @@ print("\n【步骤1】获取历史数据")
 print("-" * 100)
 
 try:
-    from data.flow.flow_fetcher import FlowDataFetcher
+    from data_handlers.flow.flow_fetcher import FlowDataFetcher
     from configs.db_config import load_confidential_config
 
     config = load_confidential_config()

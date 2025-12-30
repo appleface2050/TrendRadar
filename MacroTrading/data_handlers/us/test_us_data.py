@@ -8,9 +8,9 @@ from pathlib import Path
 project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from data.us.us_data_fetcher import USDataFetcher
-from data.us.us_data_manager import USDataManager
-from data.us.us_calendar import FREDReleaseCalendar
+from data_handlers.us.us_data_fetcher import USDataFetcher
+from data_handlers.us.us_data_manager import USDataManager
+from data_handlers.us.us_calendar import FREDReleaseCalendar
 
 
 def test_data_fetcher():

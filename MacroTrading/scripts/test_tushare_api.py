@@ -8,7 +8,7 @@ from pathlib import Path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
 
-from data.cn.tushare_fetcher import CNDataFetcher
+from data_handlers.cn.tushare_fetcher import CNDataFetcher
 
 print("=" * 60)
 print("测试 Tushare API 连接")

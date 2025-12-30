@@ -11,7 +11,7 @@
 
 ```
 MacroTrading/
-├── data/                           # 数据层
+├── data_handlers/                  # 数据处理层
 │   ├── us/                         # 美国数据
 │   │   ├── us_data_fetcher.py      # FRED数据获取器
 │   │   ├── us_data_manager.py      # 数据管理器
@@ -131,8 +131,8 @@ gdp_value = get_indicator_value('2024-01-15', 'GDP', 'US')
 ### 美国数据获取
 
 ```python
-from data.us.us_data_fetcher import USDataFetcher
-from data.us.us_data_manager import USDataManager
+from data_handlers.us.us_data_fetcher import USDataFetcher
+from data_handlers.us.us_data_manager import USDataManager
 
 # 获取数据
 fetcher = USDataFetcher()
@@ -146,8 +146,8 @@ manager.save_data(gdp_data)
 ### 中国数据获取
 
 ```python
-from data.cn.tushare_fetcher import CNDataFetcher
-from data.cn.cn_data_manager import CNDataManager
+from data_handlers.cn.tushare_fetcher import CNDataFetcher
+from data_handlers.cn.cn_data_manager import CNDataManager
 
 # 获取数据
 fetcher = CNDataFetcher()

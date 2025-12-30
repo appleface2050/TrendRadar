@@ -445,7 +445,7 @@ class FlowDriverModel:
 
 # 测试代码
 if __name__ == "__main__":
-    from data.flow.flow_fetcher import FlowDataFetcher
+    from data_handlers.flow.flow_fetcher import FlowDataFetcher
     from configs.db_config import get_confidential_config
 
     # 加载配置

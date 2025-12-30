@@ -36,7 +36,7 @@ print("\n【验证1】模块导入测试")
 print("-" * 100)
 
 modules_to_test = [
-    ('data.flow.flow_fetcher', 'FlowDataFetcher'),
+    ('data_handlers.flow.flow_fetcher', 'FlowDataFetcher'),
     ('models.flow.flow_driver_model', 'FlowDriverModel'),
     ('models.flow.flow_nowcasting', 'FlowNowcastingModel'),
     ('models.risk.market_risk_indicators', 'MarketRiskIndicators'),
@@ -67,7 +67,7 @@ print("\n\n【验证2】资金流数据获取器功能")
 print("-" * 100)
 
 try:
-    from data.flow.flow_fetcher import FlowDataFetcher
+    from data_handlers.flow.flow_fetcher import FlowDataFetcher
     from configs.db_config import load_confidential_config
 
     config = load_confidential_config()

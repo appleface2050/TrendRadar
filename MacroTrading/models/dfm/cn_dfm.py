@@ -19,7 +19,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from models.dfm.base_dfm import BaseDFM, SparseDFM
-from data.cn.cn_data_manager import CNDataManager
+from data_handlers.cn.cn_data_manager import CNDataManager
 
 
 class CNDFM(BaseDFM):

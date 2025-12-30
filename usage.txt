@@ -62,7 +62,24 @@ OECD Composite Leading Indicators (CLI) Methodology.
 1. 报告需要给出详细参考文献。
 2. 将你的完整思路作为附录，加到报告的最后。
 
+# skill_seekers
+# 0. 异步模式（3 倍速度）
+skill-seekers scrape --config configs/react.json --async --workers 8
 
+# 1. （可选）AI 增强 SKILL.md
+skill-seekers enhance output/react/
+
+# 2. 打包成 zip
+echo "y" | skill-seekers package output/react/
+# → 生成 output/react.zip
+
+# 3. 安装到 Claude Code
+skill-seekers install-agent output/react/ --agent claude
+
+# 4. 重启 Claude Code，即可使用！
+
+# dir
+\\wsl.localhost\Ubuntu-22.04\home\shang\git
 
 
 
