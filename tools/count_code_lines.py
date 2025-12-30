@@ -128,7 +128,9 @@ def scan_directory(root_dir: str, ignore_dirs: Set[str]) -> Dict[str, int]:
             # 跳过非代码文件
             non_code_extensions = {
                 '.txt', '.pkl', '.pdf', '.db', '.sqlite', '.db-wal', '.db-shm',
-                '.xls', '.xlsx', '.xlsm', '.log', '.pid', '.scip', '.identifier'
+                '.xls', '.xlsx', '.xlsm', '.log', '.pid', '.scip', '.identifier',
+                '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.bmp', '.webp',
+                '.woff', '.woff2', '.ttf', '.eot', '.otf', '.bak', '.tmp', '.swp'
             }
             if any(file.lower().endswith(ext) for ext in non_code_extensions):
                 continue
