@@ -43,8 +43,8 @@ def load_confidential_config():
 _conf = load_confidential_config()
 
 # FRED API 配置
-FRED_API_KEY = _conf.get('FRED_API_Key', os.getenv('FRED_API_KEY', ''))
+FRED_API_KEY = _conf.get('fred', {}).get('api_key', os.getenv('FRED_API_KEY', ''))
 
 # Tushare API 配置（特殊 endpoint）
-TUSHARE_TOKEN = _conf.get('TUSHARE_DataApi__token', os.getenv('TUSHARE_TOKEN', ''))
-TUSHARE_HTTP_URL = _conf.get('TUSHARE_DataApi__http_url', 'http://1w1a.xiximiao.com/dataapi')
+TUSHARE_TOKEN = _conf.get('tushare', {}).get('token', os.getenv('TUSHARE_TOKEN', ''))
+TUSHARE_HTTP_URL = _conf.get('tushare', {}).get('api_url', 'http://1w1a.xiximiao.com/dataapi')

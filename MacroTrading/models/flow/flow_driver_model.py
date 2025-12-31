@@ -446,16 +446,16 @@ class FlowDriverModel:
 # 测试代码
 if __name__ == "__main__":
     from data_handlers.flow.flow_fetcher import FlowDataFetcher
-    from configs.db_config import get_confidential_config
+    from configs.db_config import load_confidential_config
 
     # 加载配置
-    config = get_confidential_config()
+    config = load_confidential_config()
 
     # 获取数据
     print("获取资金流数据...")
     fetcher = FlowDataFetcher(
-        tushare_token=config.get('TUSHARE_DataApi__token'),
-        fred_key=config.get('FRED_API_Key')
+        tushare_token=config.get('tushare', {}).get('token'),
+        fred_key=config.get('fred', {}).get('api_key')
     )
 
     end_date = datetime.now().strftime('%Y-%m-%d')

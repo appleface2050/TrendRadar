@@ -22,8 +22,8 @@ from configs.db_config import load_confidential_config
 config = load_confidential_config()
 
 fetcher = FlowDataFetcher(
-    tushare_token=config.get('TUSHARE_DataApi__token'),
-    fred_key=config.get('FRED_API_Key')
+    tushare_token=config.get('tushare', {}).get('token'),
+    fred_key=config.get('fred', {}).get('api_key')
 )
 
 # 测试获取10年期国债收益率（最近3年）

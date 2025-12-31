@@ -42,8 +42,8 @@ try:
     config = load_confidential_config()
 
     fetcher = FlowDataFetcher(
-        tushare_token=config.get('TUSHARE_DataApi__token'),
-        fred_key=config.get('FRED_API_Key')
+        tushare_token=config.get('tushare', {}).get('token'),
+        fred_key=config.get('fred', {}).get('api_key')
     )
 
     print("开始获取数据...")

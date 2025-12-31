@@ -74,7 +74,7 @@ class CNDataFetcher:
 
         if not self.token:
             logger.warning("未设置 Tushare token，某些功能可能受限")
-            logger.warning("请在 confidential.json 中设置 TUSHARE_DataApi__token")
+            logger.warning("请在 confidential.json 中设置 tushare.token")
             self.pro = None
         else:
             try:
