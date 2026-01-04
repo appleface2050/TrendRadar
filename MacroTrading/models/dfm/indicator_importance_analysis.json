@@ -1,0 +1,148 @@
+{
+  "by_factor": {
+    "Factor_1": {
+      "high_contribution": {
+        "indicators": [],
+        "loadings": {}
+      },
+      "medium_contribution": {
+        "indicators": [
+          "DGS10",
+          "DGS2",
+          "T10Y2Y",
+          "T10Y3M"
+        ],
+        "loadings": {
+          "DGS10": 0.4513,
+          "DGS2": 0.5421,
+          "T10Y2Y": 0.4946,
+          "T10Y3M": 0.5036
+        }
+      },
+      "low_contribution": {
+        "indicators": [
+          "GDP_growth",
+          "M1SL_growth",
+          "M2SL_growth"
+        ],
+        "loadings": {
+          "GDP_growth": 0.0011,
+          "M1SL_growth": 0.0274,
+          "M2SL_growth": 0.0591
+        }
+      }
+    },
+    "Factor_2": {
+      "high_contribution": {
+        "indicators": [],
+        "loadings": {}
+      },
+      "medium_contribution": {
+        "indicators": [
+          "M1SL_growth",
+          "M2SL_growth"
+        ],
+        "loadings": {
+          "M1SL_growth": 0.688,
+          "M2SL_growth": 0.6993
+        }
+      },
+      "low_contribution": {
+        "indicators": [
+          "DGS10",
+          "DGS2",
+          "T10Y2Y",
+          "T10Y3M",
+          "GDP_growth"
+        ],
+        "loadings": {
+          "DGS10": 0.0264,
+          "DGS2": 0.0119,
+          "T10Y2Y": 0.0629,
+          "T10Y3M": 0.0689,
+          "GDP_growth": 0.1677
+        }
+      }
+    },
+    "Factor_3": {
+      "high_contribution": {
+        "indicators": [
+          "GDP_growth"
+        ],
+        "loadings": {
+          "GDP_growth": 0.9779
+        }
+      },
+      "medium_contribution": {
+        "indicators": [],
+        "loadings": {}
+      },
+      "low_contribution": {
+        "indicators": [
+          "DGS10",
+          "DGS2",
+          "T10Y2Y",
+          "T10Y3M",
+          "M1SL_growth",
+          "M2SL_growth"
+        ],
+        "loadings": {
+          "DGS10": 0.022,
+          "DGS2": 0.0053,
+          "T10Y2Y": 0.0205,
+          "T10Y3M": 0.0178,
+          "M1SL_growth": 0.2038,
+          "M2SL_growth": 0.0298
+        }
+      }
+    }
+  },
+  "overall_importance": {
+    "GDP_growth": {
+      "max_loading": 0.9779,
+      "max_loading_factor": "Factor_3",
+      "mean_loading": 0.3822,
+      "rank": 1
+    },
+    "M2SL_growth": {
+      "max_loading": 0.6993,
+      "max_loading_factor": "Factor_2",
+      "mean_loading": 0.2627,
+      "rank": 2
+    },
+    "M1SL_growth": {
+      "max_loading": 0.688,
+      "max_loading_factor": "Factor_2",
+      "mean_loading": 0.3064,
+      "rank": 3
+    },
+    "DGS2": {
+      "max_loading": 0.5421,
+      "max_loading_factor": "Factor_1",
+      "mean_loading": 0.1864,
+      "rank": 4
+    },
+    "T10Y3M": {
+      "max_loading": 0.5036,
+      "max_loading_factor": "Factor_1",
+      "mean_loading": 0.1968,
+      "rank": 5
+    },
+    "T10Y2Y": {
+      "max_loading": 0.4946,
+      "max_loading_factor": "Factor_1",
+      "mean_loading": 0.1926,
+      "rank": 6
+    },
+    "DGS10": {
+      "max_loading": 0.4513,
+      "max_loading_factor": "Factor_1",
+      "mean_loading": 0.1666,
+      "rank": 7
+    }
+  },
+  "redundant_indicators": [],
+  "key_indicators": [
+    "GDP_growth"
+  ]
+}
