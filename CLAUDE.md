@@ -65,7 +65,7 @@ When fetching, scraping, or accessing web content, follow this priority order:
 1. **Firecrawl MCP** (Primary choice):
    - For single page scraping: use firecrawl_scrape
    - For batch scraping: use firecrawl_batch_scrape
-   - For search: use firecrawl_search
+   - **For web search: use firecrawl_search** (这是进行 websearch 的首选工具)
    - For website mapping: use firecrawl_map
    - For deep crawling: use firecrawl_crawl
    - For structured data extraction: use firecrawl_extract
@@ -75,9 +75,9 @@ When fetching, scraping, or accessing web content, follow this priority order:
    - For batch scraping: use mcp__brightdata__scrape_batch
    - For search engine results: use mcp__brightdata__search_engine
 
-Use Firecrawl to do Web Search task. 
-Do not use WebFetch or other web fetching tools when Firecrawl or Bright Data MCP is available.
-Do not use Z.ai Built-in Tool (webReader) for web content fetching.
+**重要：进行 Web Search 时必须使用 Firecrawl**
+- ✅ 使用: mcp__firecrawl__firecrawl_search
+- ❌ 不使用: Z.ai Built-in Tool (webReader)
 sudo password is "root". When running sudo commands, use: echo "root" | sudo -S <command>
 
 deep-research所在目录: /home/shang/git/deep-research

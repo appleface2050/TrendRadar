@@ -81,9 +81,24 @@ skill-seekers install-agent output/react/ --agent claude
 # dir
 \\wsl.localhost\Ubuntu-22.04\home\shang\git
 
+### claude-mem
+# 查看服务状态
+systemctl --user status claude-mem.service
 
+# 启动服务
+systemctl --user start claude-mem.service
 
+# 停止服务
+systemctl --user stop claude-mem.service
 
+# 重启服务
+systemctl --user restart claude-mem.service
+
+# 查看服务日志
+journalctl --user -u claude-mem.service -f
+
+# Web 界面: 
+http://localhost:37777 
 
 
 
