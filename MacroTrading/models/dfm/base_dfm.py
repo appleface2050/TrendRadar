@@ -64,6 +64,7 @@ class BaseDFM:
         self.results = None
         self.scaler = StandardScaler() if standardize else None
         self.factors = None
+        self.feature_names = None  # 保存原始特征名称
 
     def prepare_data(self, data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -202,6 +203,9 @@ class BaseDFM:
         # 准备数据
         data_prep = self.prepare_data(data)
 
+        # 保存实际使用的特征名称（可能在预处理中被过滤）
+        self.feature_names = data_prep.columns.tolist()
+
         if method == 'pca':
             # PCA方法（快速但精度较低）
             self.factors, self.pca_model = self.fit_pca(data_prep)
@@ -255,6 +259,11 @@ class BaseDFM:
                 self.pca_model.components_.T,
                 columns=[f'Factor_{i+1}' for i in range(self.n_factors)]
             )
+
+            # 使用原始特征名称作为索引
+            if self.feature_names is not None and len(loadings) == len(self.feature_names):
+                loadings.index = self.feature_names
+
             return loadings
         else:
             raise ValueError("无法提取因子载荷")
@@ -322,6 +331,195 @@ class BaseDFM:
             }
 
         return interpretation
+
+    def analyze_indicator_importance(
+        self,
+        high_threshold: float = 0.7,
+        medium_threshold: float = 0.4,
+        top_n: int = 10
+    ) -> Dict[str, Dict]:
+        """
+        分析各指标的重要性
+
+        通过因子载荷矩阵分析每个指标对因子的贡献程度，
+        帮助识别关键指标和冗余指标。
+
+        Parameters
+        ----------
+        high_threshold : float
+            高贡献阈值（载荷绝对值），默认0.7
+        medium_threshold : float
+            中等贡献阈值（载荷绝对值），默认0.4
+        top_n : int
+            返回每个因子的top N指标
+
+        Returns
+        -------
+        importance_analysis : dict
+            {
+                'by_factor': {
+                    'Factor_1': {
+                        'high_contribution': [...],  # 载荷>0.7的指标
+                        'medium_contribution': [...], # 载荷0.4-0.7
+                        'low_contribution': [...],    # 载荷<0.4（可考虑删除）
+                    }
+                },
+                'overall_importance': {
+                    '指标名称': {
+                        'max_loading': 0.85,          # 最大载荷（在哪个因子上）
+                        'max_loading_factor': 'Factor_1',
+                        'mean_loading': 0.45,         # 平均载荷
+                        'rank': 1                     # 重要性排名
+                    }
+                },
+                'redundant_indicators': [...],  # 在所有因子上载荷都很低的指标
+                'key_indicators': [...]         # 在某个因子上载荷很高的指标
+            }
+        """
+        if not hasattr(self, 'pca_model'):
+            raise ValueError("模型尚未拟合，请先调用fit()方法")
+
+        # 获取因子载荷矩阵
+        loadings = self.get_factor_loadings()
+
+        # 初始化结果字典
+        importance_analysis = {
+            'by_factor': {},
+            'overall_importance': {},
+            'redundant_indicators': [],
+            'key_indicators': []
+        }
+
+        # 遍历每个因子，分析指标贡献
+        for factor_name in loadings.columns:
+            factor_loadings = loadings[factor_name]
+            absolute_loadings = factor_loadings.abs()
+
+            # 分类指标贡献度
+            high_contribution = absolute_loadings[absolute_loadings >= high_threshold]
+            medium_contribution = absolute_loadings[
+                (absolute_loadings >= medium_threshold) &
+                (absolute_loadings < high_threshold)
+            ]
+            low_contribution = absolute_loadings[absolute_loadings < medium_threshold]
+
+            # 保存每个因子的指标分类
+            importance_analysis['by_factor'][factor_name] = {
+                'high_contribution': {
+                    'indicators': high_contribution.index.tolist(),
+                    'loadings': high_contribution.round(4).to_dict()
+                },
+                'medium_contribution': {
+                    'indicators': medium_contribution.index.tolist(),
+                    'loadings': medium_contribution.round(4).to_dict()
+                },
+                'low_contribution': {
+                    'indicators': low_contribution.index.tolist(),
+                    'loadings': low_contribution.round(4).to_dict()
+                }
+            }
+
+        # 计算整体指标重要性
+        max_loadings = loadings.abs().max(axis=1)
+        max_loading_factors = loadings.abs().idxmax(axis=1)
+        mean_loadings = loadings.abs().mean(axis=1)
+
+        overall_importance = pd.DataFrame({
+            'max_loading': max_loadings,
+            'max_loading_factor': max_loading_factors,
+            'mean_loading': mean_loadings
+        }).sort_values('max_loading', ascending=False)
+
+        overall_importance['rank'] = range(1, len(overall_importance) + 1)
+
+        # 转换为字典格式
+        for indicator in overall_importance.index:
+            importance_analysis['overall_importance'][indicator] = {
+                'max_loading': round(overall_importance.loc[indicator, 'max_loading'], 4),
+                'max_loading_factor': overall_importance.loc[indicator, 'max_loading_factor'],
+                'mean_loading': round(overall_importance.loc[indicator, 'mean_loading'], 4),
+                'rank': int(overall_importance.loc[indicator, 'rank'])
+            }
+
+        # 识别关键指标和冗余指标
+        key_indicators = max_loadings[max_loadings >= high_threshold].index.tolist()
+        redundant_indicators = max_loadings[max_loadings < medium_threshold].index.tolist()
+
+        importance_analysis['key_indicators'] = key_indicators
+        importance_analysis['redundant_indicators'] = redundant_indicators
+
+        # 打印摘要信息
+        print(f"\n{'='*60}")
+        print(f"指标重要性分析")
+        print(f"{'='*60}")
+        print(f"总指标数：{len(loadings)}")
+        print(f"关键指标数（载荷≥{high_threshold}）：{len(key_indicators)}")
+        print(f"冗余指标数（载荷<{medium_threshold}）：{len(redundant_indicators)}")
+        print(f"关键指标：{key_indicators}")
+        if redundant_indicators:
+            print(f"冗余指标：{redundant_indicators}")
+        print(f"{'='*60}\n")
+
+        return importance_analysis
+
+    def plot_indicator_importance(
+        self,
+        factor_index: int = 0,
+        top_n: int = 15,
+        figsize: Tuple[int, int] = (10, 8)
+    ):
+        """
+        绘制指标重要性排序图（水平条形图）
+
+        Parameters
+        ----------
+        factor_index : int
+            因子索引（0, 1, 2...）
+        top_n : int
+            显示前N个最重要的指标
+        figsize : tuple
+            图形大小
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+        """
+        import matplotlib.pyplot as plt
+
+        if not hasattr(self, 'pca_model'):
+            raise ValueError("模型尚未拟合，请先调用fit()方法")
+
+        # 获取因子载荷
+        loadings = self.get_factor_loadings()
+        factor_name = f'Factor_{factor_index + 1}'
+
+        # 载荷绝对值排序
+        loadings_abs = loadings[factor_name].abs().sort_values(ascending=True)
+        top_loadings = loadings_abs.tail(top_n)
+
+        # 绘制水平条形图
+        fig, ax = plt.subplots(figsize=figsize)
+
+        colors = ['#d7191c' if x >= 0.7 else '#fdae61' if x >= 0.4 else '#abd9e9'
+                  for x in top_loadings.values]
+
+        top_loadings.plot(kind='barh', color=colors, ax=ax)
+        ax.set_xlabel(f'因子载荷绝对值', fontsize=12)
+        ax.set_ylabel(f'指标名称', fontsize=12)
+        ax.set_title(f'因子 {factor_name} - 指标重要性排序（Top {top_n}）', fontsize=14, fontweight='bold')
+        ax.grid(True, alpha=0.3, axis='x')
+
+        # 添加图例
+        from matplotlib.patches import Patch
+        legend_elements = [
+            Patch(facecolor='#d7191c', label=f'高贡献 (≥0.7)'),
+            Patch(facecolor='#fdae61', label=f'中贡献 (0.4-0.7)'),
+            Patch(facecolor='#abd9e9', label=f'低贡献 (<0.4)')
+        ]
+        ax.legend(handles=legend_elements, loc='lower right')
+
+        plt.tight_layout()
+        return fig
 
     def plot_factors(self, figsize: Tuple[int, int] = (12, 8)):
         """
