@@ -179,19 +179,25 @@ class AppContext:
     def save_titles(self, results: Dict, id_to_name: Dict, failed_ids: List) -> str:
         """保存标题到文件"""
         output_path = self.get_output_path("txt", f"{self.format_time()}.txt")
-        return save_titles_to_file(results, id_to_name, failed_ids, output_path, clean_title)
+        return save_titles_to_file(
+            results, id_to_name, failed_ids, output_path, clean_title
+        )
 
     def read_today_titles(
         self, platform_ids: Optional[List[str]] = None, quiet: bool = False
     ) -> Tuple[Dict, Dict, Dict]:
         """读取当天所有标题"""
-        return read_all_today_titles(self.get_storage_manager(), platform_ids, quiet=quiet)
+        return read_all_today_titles(
+            self.get_storage_manager(), platform_ids, quiet=quiet
+        )
 
     def detect_new_titles(
         self, platform_ids: Optional[List[str]] = None, quiet: bool = False
     ) -> Dict:
         """检测最新批次的新增标题"""
-        return detect_latest_new_titles(self.get_storage_manager(), platform_ids, quiet=quiet)
+        return detect_latest_new_titles(
+            self.get_storage_manager(), platform_ids, quiet=quiet
+        )
 
     def is_first_crawl(self) -> bool:
         """检测是否是当天第一次爬取"""
@@ -280,6 +286,7 @@ class AppContext:
         mode: str = "daily",
         is_daily_summary: bool = False,
         update_info: Optional[Dict] = None,
+        rss_items: Optional[List[Dict]] = None,
     ) -> str:
         """生成HTML报告"""
         return generate_html_report(
@@ -299,6 +306,7 @@ class AppContext:
             matches_word_groups_func=self.matches_word_groups,
             load_frequency_words_func=self.load_frequency_words,
             enable_index_copy=True,
+            rss_items=rss_items,
         )
 
     def render_html(
@@ -308,6 +316,7 @@ class AppContext:
         is_daily_summary: bool = False,
         mode: str = "daily",
         update_info: Optional[Dict] = None,
+        rss_items: Optional[List[Dict]] = None,
     ) -> str:
         """渲染HTML内容"""
         return render_html_content(
@@ -318,6 +327,7 @@ class AppContext:
             update_info=update_info,
             reverse_content_order=self.config.get("REVERSE_CONTENT_ORDER", False),
             get_time_func=self.get_time,
+            rss_items=rss_items,
         )
 
     # === 通知内容渲染 ===

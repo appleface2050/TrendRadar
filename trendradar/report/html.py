@@ -6,7 +6,7 @@ HTML 报告渲染模块
 """
 
 from datetime import datetime
-from typing import Dict, Optional, Callable
+from typing import Dict, List, Optional, Callable
 
 from trendradar.report.helpers import html_escape
 
@@ -20,6 +20,7 @@ def render_html_content(
     *,
     reverse_content_order: bool = False,
     get_time_func: Optional[Callable[[], datetime]] = None,
+    rss_items: Optional[List[Dict]] = None,
 ) -> str:
     """渲染HTML内容
 
@@ -31,6 +32,7 @@ def render_html_content(
         update_info: 更新信息（可选）
         reverse_content_order: 是否反转内容顺序（新增热点在前）
         get_time_func: 获取当前时间的函数（可选，默认使用 datetime.now）
+        rss_items: RSS 订阅条目列表（可选）
 
     Returns:
         渲染后的 HTML 字符串
@@ -381,6 +383,105 @@ def render_html_content(
                 margin: 0;
             }
 
+            .rss-section {
+                margin-top: 40px;
+                padding-top: 24px;
+                border-top: 2px solid #e5e7eb;
+            }
+
+            .rss-section-title {
+                color: #1a1a1a;
+                font-size: 16px;
+                font-weight: 600;
+                margin: 0 0 20px 0;
+            }
+
+            .rss-feed-group {
+                margin-bottom: 24px;
+            }
+
+            .rss-feed-group:last-child {
+                margin-bottom: 0;
+            }
+
+            .rss-feed-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 12px;
+                padding-bottom: 8px;
+                border-bottom: 2px solid #10b981;
+            }
+
+            .rss-feed-name {
+                font-size: 16px;
+                font-weight: 600;
+                color: #059669;
+            }
+
+            .rss-feed-count {
+                color: #666;
+                font-size: 13px;
+                font-weight: 500;
+            }
+
+            .rss-item {
+                margin-bottom: 16px;
+                padding: 16px;
+                background: #f0fdf4;
+                border-radius: 8px;
+                border-left: 3px solid #10b981;
+            }
+
+            .rss-item:last-child {
+                margin-bottom: 0;
+            }
+
+            .rss-meta {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 8px;
+                flex-wrap: wrap;
+            }
+
+            .rss-time {
+                color: #6b7280;
+                font-size: 12px;
+            }
+
+            .rss-author {
+                color: #059669;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            .rss-title {
+                font-size: 15px;
+                line-height: 1.5;
+                color: #1a1a1a;
+                margin: 0 0 8px 0;
+                font-weight: 500;
+            }
+
+            .rss-summary {
+                font-size: 13px;
+                color: #6b7280;
+                line-height: 1.6;
+                margin: 0;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .new-item-title {
+                font-size: 14px;
+                line-height: 1.4;
+                color: #1a1a1a;
+                margin: 0;
+            }
+
             .error-section {
                 background: #fef2f2;
                 border: 1px solid #fecaca;
@@ -601,7 +702,9 @@ def render_html_content(
                     else:
                         rank_text = f"{min_rank}-{max_rank}"
 
-                    stats_html += f'<span class="rank-num {rank_class}">{rank_text}</span>'
+                    stats_html += (
+                        f'<span class="rank-num {rank_class}">{rank_text}</span>'
+                    )
 
                 # 处理时间显示
                 time_display = title_data.get("time_display", "")
@@ -648,7 +751,7 @@ def render_html_content(
     if report_data["new_titles"]:
         new_titles_html += f"""
                 <div class="new-section">
-                    <div class="new-section-title">本次新增热点 (共 {report_data['total_new_count']} 条)</div>"""
+                    <div class="new-section-title">本次新增热点 (共 {report_data["total_new_count"]} 条)</div>"""
 
         for source_data in report_data["new_titles"]:
             escaped_source = html_escape(source_data["source_name"])
@@ -706,13 +809,82 @@ def render_html_content(
         new_titles_html += """
                 </div>"""
 
-    # 根据配置决定内容顺序
+    rss_html = ""
+    if rss_items and len(rss_items) > 0:
+        feeds_map: Dict[str, List[Dict]] = {}
+        for item in rss_items:
+            feed_id = item.get("feed_id", "unknown")
+            if feed_id not in feeds_map:
+                feeds_map[feed_id] = []
+            feeds_map[feed_id].append(item)
+
+        rss_html += """
+                <div class="rss-section">
+                    <div class="rss-section-title">RSS 订阅更新</div>"""
+
+        for feed_id, items in feeds_map.items():
+            feed_name = items[0].get("feed_name", feed_id) if items else feed_id
+            escaped_feed_name = html_escape(feed_name)
+
+            rss_html += f"""
+                    <div class="rss-feed-group">
+                        <div class="rss-feed-header">
+                            <div class="rss-feed-name">{escaped_feed_name}</div>
+                            <div class="rss-feed-count">{len(items)} 条</div>
+                        </div>"""
+
+            for item in items:
+                escaped_title = html_escape(item.get("title", ""))
+                url = item.get("url", "")
+                published_at = item.get("published_at", "")
+                author = item.get("author", "")
+                summary = item.get("summary", "")
+
+                rss_html += """
+                        <div class="rss-item">
+                            <div class="rss-meta">"""
+
+                if published_at:
+                    rss_html += (
+                        f'<span class="rss-time">{html_escape(published_at)}</span>'
+                    )
+
+                if author:
+                    rss_html += (
+                        f'<span class="rss-author">by {html_escape(author)}</span>'
+                    )
+
+                rss_html += """
+                            </div>
+                            <div class="rss-title">"""
+
+                if url:
+                    escaped_url = html_escape(url)
+                    rss_html += f'<a href="{escaped_url}" target="_blank" class="news-link">{escaped_title}</a>'
+                else:
+                    rss_html += escaped_title
+
+                rss_html += """
+                            </div>"""
+
+                if summary:
+                    escaped_summary = html_escape(summary)
+                    rss_html += f"""
+                            <p class="rss-summary">{escaped_summary}</p>"""
+
+                rss_html += """
+                        </div>"""
+
+            rss_html += """
+                    </div>"""
+
+        rss_html += """
+                </div>"""
+
     if reverse_content_order:
-        # 新增热点在前，热点词汇统计在后
-        html += new_titles_html + stats_html
+        html += new_titles_html + stats_html + rss_html
     else:
-        # 默认：热点词汇统计在前，新增热点在后
-        html += stats_html + new_titles_html
+        html += stats_html + new_titles_html + rss_html
 
     html += """
             </div>
@@ -728,7 +900,7 @@ def render_html_content(
         html += f"""
                     <br>
                     <span style="color: #ea580c; font-weight: 500;">
-                        发现新版本 {update_info['remote_version']}，当前版本 {update_info['current_version']}
+                        发现新版本 {update_info["remote_version"]}，当前版本 {update_info["current_version"]}
                     </span>"""
 
     html += """

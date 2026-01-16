@@ -52,7 +52,9 @@ def prepare_report_data(
                 for source_id, titles_data in new_titles.items():
                     filtered_titles = {}
                     for title, title_data in titles_data.items():
-                        if matches_word_groups_func(title, word_groups, filter_words, global_filters):
+                        if matches_word_groups_func(
+                            title, word_groups, filter_words, global_filters
+                        ):
                             filtered_titles[title] = title_data
                     if filtered_titles:
                         filtered_new_titles[source_id] = filtered_titles
@@ -61,10 +63,18 @@ def prepare_report_data(
                 filtered_new_titles = new_titles
 
             # 打印过滤后的新增热点数（与推送显示一致）
-            original_new_count = sum(len(titles) for titles in new_titles.values()) if new_titles else 0
-            filtered_new_count = sum(len(titles) for titles in filtered_new_titles.values()) if filtered_new_titles else 0
+            original_new_count = (
+                sum(len(titles) for titles in new_titles.values()) if new_titles else 0
+            )
+            filtered_new_count = (
+                sum(len(titles) for titles in filtered_new_titles.values())
+                if filtered_new_titles
+                else 0
+            )
             if original_new_count > 0:
-                print(f"频率词过滤后：{filtered_new_count} 条新增热点匹配（原始 {original_new_count} 条）")
+                print(
+                    f"频率词过滤后：{filtered_new_count} 条新增热点匹配（原始 {original_new_count} 条）"
+                )
 
         if filtered_new_titles and id_to_name:
             for source_id, titles_data in filtered_new_titles.items():
@@ -154,6 +164,7 @@ def generate_html_report(
     matches_word_groups_func: Optional[Callable] = None,
     load_frequency_words_func: Optional[Callable] = None,
     enable_index_copy: bool = True,
+    rss_items: Optional[List[Dict]] = None,
 ) -> str:
     """
     生成 HTML 报告
@@ -175,6 +186,7 @@ def generate_html_report(
         matches_word_groups_func: 词组匹配函数
         load_frequency_words_func: 加载频率词函数
         enable_index_copy: 是否复制到 index.html
+        rss_items: RSS 订阅条目列表（可选）
 
     Returns:
         str: 生成的 HTML 文件路径
@@ -209,11 +221,18 @@ def generate_html_report(
     # 渲染 HTML 内容
     if render_html_func:
         html_content = render_html_func(
-            report_data, total_titles, is_daily_summary, mode, update_info
+            report_data,
+            total_titles,
+            is_daily_summary,
+            mode,
+            update_info,
+            rss_items=rss_items,
         )
     else:
         # 默认简单 HTML
-        html_content = f"<html><body><h1>Report</h1><pre>{report_data}</pre></body></html>"
+        html_content = (
+            f"<html><body><h1>Report</h1><pre>{report_data}</pre></body></html>"
+        )
 
     # 写入文件
     with open(file_path, "w", encoding="utf-8") as f:
