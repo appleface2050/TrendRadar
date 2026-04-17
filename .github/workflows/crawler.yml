@@ -59,6 +59,22 @@ jobs:
           fetch-depth: 1
           clean: true
 
+      - name: Resolve state cache date
+        id: state-cache-meta
+        run: |
+          echo "cache_date=$(TZ=Asia/Shanghai date +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore crawler state
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            output/news
+            output/rss
+            output/meta
+          key: trendradar-state-${{ github.ref_name }}-${{ steps.state-cache-meta.outputs.cache_date }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            trendradar-state-${{ github.ref_name }}-${{ steps.state-cache-meta.outputs.cache_date }}-
+
       - name: Check Expiration
         env:
           GH_TOKEN: ${{ github.token }}
@@ -168,3 +184,13 @@ jobs:
           S3_REGION: ${{ secrets.S3_REGION }}
           GITHUB_ACTIONS: true
         run: uv run python -m trendradar
+
+      - name: Save crawler state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            output/news
+            output/rss
+            output/meta
+          key: trendradar-state-${{ github.ref_name }}-${{ steps.state-cache-meta.outputs.cache_date }}-${{ github.run_id }}-${{ github.run_attempt }}

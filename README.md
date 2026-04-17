@@ -280,7 +280,7 @@
 > **Breaking Change**：配置文件升级（config.yaml 2.0.0），旧版 `push_window` 和 `analysis_window` 配置不再兼容，请参考新版 config.yaml 迁移
 
 - **统一调度系统**：新增 `timeline.yaml`，用一套配置控制「什么时间采集 / 推送 / AI 分析」
-- **5 种预设模板**：`always_on`（全天候，默认）、`morning_evening`（早晚汇总）、`office_hours`（办公时间）、`night_owl`（夜猫子）、`custom`（自定义）；也支持在 `presets:` 下新增自己的模板，只要 key 不重复，然后在 config.yaml 里填你的模板名即可
+- **6 种预设模板**：`always_on`（全天候，默认）、`daily_incremental`（每日一次增量报告）、`morning_evening`（早晚汇总）、`office_hours`（办公时间）、`night_owl`（夜猫子）、`custom`（自定义）；也支持在 `presets:` 下新增自己的模板，只要 key 不重复，然后在 config.yaml 里填你的模板名即可
 - **灵活的时间段配置**：支持工作日/周末差异化、跨午夜时间段、per-period once 去重
 - **可视化配置编辑器**：
   - 新增 `timeline.yaml` 编辑标签页，与 config.yaml / frequency_words.txt 并列
@@ -1016,7 +1016,7 @@ frequency_words.txt 文件增加了一个【必须词】功能，使用 + 号
 
 | 功能 | 说明 | 默认 |
 |------|------|------|
-| **调度系统** | 按周一到周日逐日编排：为每天分配不同时间段、推送模式和 AI 分析策略。**每个时段可独立设置筛选方式（关键词/AI）和关注方向**，实现不同时间看不同类型新闻。内置 5 种预设（always_on / morning_evening / office_hours / night_owl / custom），也可自定义。支持工作日/周末差异化、跨午夜时段、per-period 去重、时段冲突检测（v6.0.0 + v6.5.0） | morning_evening |
+| **调度系统** | 按周一到周日逐日编排：为每天分配不同时间段、推送模式和 AI 分析策略。**每个时段可独立设置筛选方式（关键词/AI）和关注方向**，实现不同时间看不同类型新闻。内置 6 种预设（always_on / daily_incremental / morning_evening / office_hours / night_owl / custom），也可自定义。支持工作日/周末差异化、跨午夜时段、per-period 去重、时段冲突检测（v6.0.0 + v6.5.0） | morning_evening |
 | **内容顺序配置** | 通过 `display.region_order` 调整各区域（热榜、新增热点、RSS、独立展示区、AI 分析）的显示顺序；通过 `display.regions` 控制各区域是否显示（v5.2.0） | 见配置文件 |
 | **显示模式切换** | `keyword`=按关键词分组，`platform`=按平台分组（v4.6.0 新增） | keyword |
 
@@ -3177,13 +3177,14 @@ display:
 ```yaml
 schedule:
   enabled: true
-  preset: "morning_evening"     # 改这里就行
+  preset: "daily_incremental"   # 改这里就行
 ```
 
 #### 可选预设模板
 
 | 模板名 | 说明 | 推送行为 |
 |-------|------|---------|
+| `daily_incremental` | 每日一次增量报告 | 全天采集，不限固定时间；当天首次可运行时推送一次增量报告 |
 | `morning_evening` | 全天增量 + 晚间汇总（推荐） | 全天有新增就推 + 19:00-21:00 晚间当日汇总 |
 | `always_on` | 全天候监控 | 全天有新增就推送，不划分时间段 |
 | `office_hours` | 办公时间 | 工作日三段式（到岗速览→午间热点→收工汇总），周末增量自由推 |
@@ -3199,6 +3200,7 @@ schedule:
 > ⚠️ **从旧版本升级的用户注意：**
 > - v6.0.0 移除了旧的 `notification.push_window` 和 `ai_analysis.analysis_window` 配置
 > - 请改用新的 `schedule` + `timeline.yaml` 调度系统
+> - 旧的“每天一次增量报告”可用 `daily_incremental` 预设替代
 > - 旧的"每天推送一次"可用 `morning_evening` 预设替代
 > - 旧的"工作时间推送"可用 `office_hours` 预设替代
 
@@ -3206,6 +3208,7 @@ schedule:
 > - GitHub Actions 执行时间不稳定，可能有 ±15 分钟的偏差
 > - 时间段范围建议至少留足 **2 小时**
 > - 如果想要精准的定时推送，建议使用 **Docker 部署**在个人服务器上
+> - 若未配置 S3/R2 等远程存储，工作流会通过 GitHub Actions Cache 保留当天 `output/news`、`output/rss`、`output/meta` 状态，用于避免同一天重复推送
 
 </details>
 

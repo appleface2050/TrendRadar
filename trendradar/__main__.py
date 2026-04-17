@@ -475,14 +475,15 @@ class NewsAnalyzer:
             print("[AI] 调度器: 当前时间段不执行 AI 分析")
             return None
 
-        if schedule.once_analyze and schedule.period_key:
+        execution_key = self._get_schedule_execution_key(schedule)
+        if schedule.once_analyze and execution_key:
             scheduler = self.ctx.create_scheduler()
             date_str = self.ctx.format_date()
-            if scheduler.already_executed(schedule.period_key, "analyze", date_str):
-                print(f"[AI] 调度器: 时间段 {schedule.period_name or schedule.period_key} 今天已分析过，跳过")
+            if scheduler.already_executed(execution_key, "analyze", date_str):
+                print(f"[AI] 调度器: 范围 {execution_key} 今天已分析过，跳过")
                 return None
             else:
-                print(f"[AI] 调度器: 时间段 {schedule.period_name or schedule.period_key} 今天首次分析")
+                print(f"[AI] 调度器: 范围 {execution_key} 今天首次分析")
 
         print("[AI] 正在进行 AI 分析...")
         try:
@@ -560,10 +561,10 @@ class NewsAnalyzer:
                     print("[AI] 分析完成")
 
                 # 记录 AI 分析
-                if schedule.once_analyze and schedule.period_key:
+                if schedule.once_analyze and execution_key:
                     scheduler = self.ctx.create_scheduler()
                     date_str = self.ctx.format_date()
-                    scheduler.record_execution(schedule.period_key, "analyze", date_str)
+                    scheduler.record_execution(execution_key, "analyze", date_str)
             elif result.skipped:
                 print(f"[AI] {result.error}")
             else:
@@ -952,14 +953,15 @@ class NewsAnalyzer:
                 print("[推送] 调度器: 当前时间段不执行推送")
                 return False
 
-            if schedule.once_push and schedule.period_key:
+            execution_key = self._get_schedule_execution_key(schedule)
+            if schedule.once_push and execution_key:
                 scheduler = self.ctx.create_scheduler()
                 date_str = self.ctx.format_date()
-                if scheduler.already_executed(schedule.period_key, "push", date_str):
-                    print(f"[推送] 调度器: 时间段 {schedule.period_name or schedule.period_key} 今天已推送过，跳过")
+                if scheduler.already_executed(execution_key, "push", date_str):
+                    print(f"[推送] 调度器: 范围 {execution_key} 今天已推送过，跳过")
                     return False
                 else:
-                    print(f"[推送] 调度器: 时间段 {schedule.period_name or schedule.period_key} 今天首次推送")
+                    print(f"[推送] 调度器: 范围 {execution_key} 今天首次推送")
 
             # AI 分析：优先使用传入的结果，避免重复分析
             if ai_result is None:
@@ -999,10 +1001,10 @@ class NewsAnalyzer:
 
             # 记录推送成功
             if any(results.values()):
-                if schedule.once_push and schedule.period_key:
+                if schedule.once_push and execution_key:
                     scheduler = self.ctx.create_scheduler()
                     date_str = self.ctx.format_date()
-                    scheduler.record_execution(schedule.period_key, "push", date_str)
+                    scheduler.record_execution(execution_key, "push", date_str)
 
             return True
 
@@ -1027,6 +1029,15 @@ class NewsAnalyzer:
                 )
 
         return False
+
+    @staticmethod
+    def _get_schedule_execution_key(schedule: ResolvedSchedule) -> Optional[str]:
+        """为调度去重生成稳定 key，兼容 default 场景。"""
+        if schedule.period_key:
+            return schedule.period_key
+        if schedule.day_plan:
+            return f"__default__:{schedule.day_plan}"
+        return None
 
     def _initialize_and_check_config(self) -> None:
         """通用初始化和配置检查"""

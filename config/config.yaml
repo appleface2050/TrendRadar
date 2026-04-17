@@ -31,17 +31,18 @@ app:
 #
 # 快速上手：选一个预设模板，改 preset 的值就行
 #
-#   always_on       → 全天候，有新增即推送
-#   morning_evening → 全天推送 + 晚间当日汇总（推荐）
-#   office_hours    → 工作日三段式（到岗→午间→收工），周末增量自由推
-#   night_owl       → 午后速览 + 深夜全天汇总
-#   custom          → 完全自定义，详见 timeline.yaml
+#   always_on         → 全天候，有新增即推送
+#   daily_incremental → 每日一次增量报告
+#   morning_evening   → 全天推送 + 晚间当日汇总（推荐）
+#   office_hours      → 工作日三段式（到岗→午间→收工），周末增量自由推
+#   night_owl         → 午后速览 + 深夜全天汇总
+#   custom            → 完全自定义，详见 timeline.yaml
 #
 # 详细时间线图请查看 config/timeline.yaml
 # ===============================================================
 schedule:
   enabled: true                         # 是否启用调度系统
-  preset: "morning_evening"             # 预设模板名称（见上方说明）
+  preset: "daily_incremental"           # 预设模板名称（见上方说明）
 
 
 # ===============================================================
